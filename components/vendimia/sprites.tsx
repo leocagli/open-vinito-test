@@ -570,3 +570,546 @@ export function WineBottles({ size = 32 }: { size?: number }) {
     </svg>
   );
 }
+
+// ============================================
+// ADDITIONAL SPRITES FROM SPRITE SHEET
+// ============================================
+
+// Worker poses - Harvesting (cosechando)
+export function WorkerHarvesting({ 
+  skinColor = '#e8c39e', 
+  hairColor = '#5c3d2e', 
+  shirtColor = '#4a6fa5',
+  size = 48
+}: { 
+  skinColor?: string;
+  hairColor?: string;
+  shirtColor?: string;
+  size?: number;
+}) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" style={{ imageRendering: 'pixelated' }}>
+      {/* Hair */}
+      <rect x="11" y="3" width="10" height="4" fill={hairColor} />
+      <rect x="10" y="4" width="1" height="3" fill={hairColor} />
+      <rect x="21" y="4" width="1" height="3" fill={hairColor} />
+      
+      {/* Head */}
+      <rect x="11" y="6" width="10" height="8" fill={skinColor} />
+      <rect x="10" y="7" width="1" height="6" fill={skinColor} />
+      <rect x="21" y="7" width="1" height="6" fill={skinColor} />
+      
+      {/* Eyes */}
+      <rect x="13" y="9" width="2" height="2" fill="#3e2723" />
+      <rect x="17" y="9" width="2" height="2" fill="#3e2723" />
+      
+      {/* Body - bent over */}
+      <rect x="10" y="14" width="12" height="8" fill={shirtColor} />
+      
+      {/* Arms reaching down */}
+      <rect x="6" y="18" width="5" height="3" fill={shirtColor} />
+      <rect x="21" y="18" width="5" height="3" fill={shirtColor} />
+      <rect x="4" y="20" width="3" height="3" fill={skinColor} />
+      <rect x="25" y="20" width="3" height="3" fill={skinColor} />
+      
+      {/* Grape crate being held */}
+      <rect x="3" y="22" width="8" height="5" fill="#a1887f" />
+      <rect x="4" y="23" width="6" height="3" fill="#7b1fa2" />
+      
+      {/* Pants */}
+      <rect x="11" y="22" width="4" height="6" fill="#3d5a80" />
+      <rect x="17" y="22" width="4" height="6" fill="#3d5a80" />
+      
+      {/* Shoes */}
+      <rect x="10" y="27" width="5" height="2" fill="#5d4037" />
+      <rect x="17" y="27" width="5" height="2" fill="#5d4037" />
+    </svg>
+  );
+}
+
+// Worker poses - Watering (regando)
+export function WorkerWatering({ 
+  skinColor = '#e8c39e', 
+  hairColor = '#5c3d2e', 
+  shirtColor = '#4a6fa5',
+  size = 48
+}: { 
+  skinColor?: string;
+  hairColor?: string;
+  shirtColor?: string;
+  size?: number;
+}) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" style={{ imageRendering: 'pixelated' }}>
+      {/* Hair */}
+      <rect x="11" y="3" width="10" height="4" fill={hairColor} />
+      <rect x="10" y="4" width="1" height="3" fill={hairColor} />
+      
+      {/* Head */}
+      <rect x="11" y="6" width="10" height="8" fill={skinColor} />
+      <rect x="10" y="7" width="1" height="6" fill={skinColor} />
+      
+      {/* Eyes */}
+      <rect x="13" y="9" width="2" height="2" fill="#3e2723" />
+      <rect x="17" y="9" width="2" height="2" fill="#3e2723" />
+      
+      {/* Body */}
+      <rect x="10" y="14" width="12" height="8" fill={shirtColor} />
+      
+      {/* Arms holding watering can */}
+      <rect x="4" y="14" width="7" height="3" fill={shirtColor} />
+      <rect x="21" y="16" width="4" height="4" fill={shirtColor} />
+      <rect x="2" y="16" width="4" height="2" fill={skinColor} />
+      
+      {/* Watering can */}
+      <rect x="0" y="17" width="8" height="6" fill="#5d9cec" />
+      <rect x="7" y="15" width="3" height="2" fill="#5d9cec" />
+      <rect x="9" y="14" width="2" height="1" fill="#5d9cec" />
+      
+      {/* Water drops */}
+      <rect x="1" y="23" width="1" height="2" fill="#82b1ff" />
+      <rect x="3" y="24" width="1" height="2" fill="#82b1ff" />
+      <rect x="5" y="23" width="1" height="2" fill="#82b1ff" />
+      
+      {/* Pants */}
+      <rect x="11" y="22" width="4" height="6" fill="#3d5a80" />
+      <rect x="17" y="22" width="4" height="6" fill="#3d5a80" />
+      
+      {/* Shoes */}
+      <rect x="10" y="27" width="5" height="2" fill="#5d4037" />
+      <rect x="17" y="27" width="5" height="2" fill="#5d4037" />
+    </svg>
+  );
+}
+
+// Worker poses - Walking
+export function WorkerWalking({ 
+  skinColor = '#e8c39e', 
+  hairColor = '#5c3d2e', 
+  shirtColor = '#4a6fa5',
+  size = 48,
+  frame = 0
+}: { 
+  skinColor?: string;
+  hairColor?: string;
+  shirtColor?: string;
+  size?: number;
+  frame?: number;
+}) {
+  const legOffset = frame % 2 === 0 ? 0 : 2;
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" style={{ imageRendering: 'pixelated' }}>
+      {/* Hair */}
+      <rect x="11" y="3" width="10" height="4" fill={hairColor} />
+      <rect x="10" y="4" width="1" height="3" fill={hairColor} />
+      <rect x="21" y="4" width="1" height="3" fill={hairColor} />
+      
+      {/* Head */}
+      <rect x="11" y="6" width="10" height="8" fill={skinColor} />
+      <rect x="10" y="7" width="1" height="6" fill={skinColor} />
+      <rect x="21" y="7" width="1" height="6" fill={skinColor} />
+      
+      {/* Eyes */}
+      <rect x="13" y="9" width="2" height="2" fill="#3e2723" />
+      <rect x="17" y="9" width="2" height="2" fill="#3e2723" />
+      
+      {/* Body */}
+      <rect x="10" y="14" width="12" height="8" fill={shirtColor} />
+      
+      {/* Arms swinging */}
+      <rect x={7 - legOffset} y="16" width="4" height="6" fill={shirtColor} />
+      <rect x={21 + legOffset} y="16" width="4" height="6" fill={shirtColor} />
+      <rect x={7 - legOffset} y="21" width="3" height="2" fill={skinColor} />
+      <rect x={22 + legOffset} y="21" width="3" height="2" fill={skinColor} />
+      
+      {/* Pants - legs in walking motion */}
+      <rect x={11 + legOffset} y="22" width="4" height="6" fill="#3d5a80" />
+      <rect x={17 - legOffset} y="22" width="4" height="6" fill="#3d5a80" />
+      
+      {/* Shoes */}
+      <rect x={10 + legOffset} y="27" width="5" height="2" fill="#5d4037" />
+      <rect x={17 - legOffset} y="27" width="5" height="2" fill="#5d4037" />
+    </svg>
+  );
+}
+
+// Office worker at desk
+export function OfficeWorker({ 
+  skinColor = '#e8c39e', 
+  hairColor = '#5c3d2e', 
+  shirtColor = '#f5f5dc',
+  size = 64
+}: { 
+  skinColor?: string;
+  hairColor?: string;
+  shirtColor?: string;
+  size?: number;
+}) {
+  return (
+    <svg width={size} height={size * 0.75} viewBox="0 0 48 36" style={{ imageRendering: 'pixelated' }}>
+      {/* Desk */}
+      <rect x="18" y="24" width="28" height="4" fill="#8d6e63" />
+      <rect x="20" y="28" width="4" height="8" fill="#6d4c41" />
+      <rect x="40" y="28" width="4" height="8" fill="#6d4c41" />
+      
+      {/* Computer */}
+      <rect x="30" y="14" width="12" height="10" fill="#37474f" />
+      <rect x="31" y="15" width="10" height="8" fill="#4fc3f7" />
+      <rect x="34" y="24" width="6" height="2" fill="#455a64" />
+      
+      {/* Chair */}
+      <rect x="6" y="20" width="14" height="10" fill="#5d4037" />
+      <rect x="8" y="30" width="4" height="6" fill="#4e342e" />
+      <rect x="14" y="30" width="4" height="6" fill="#4e342e" />
+      
+      {/* Person sitting */}
+      {/* Hair */}
+      <rect x="9" y="4" width="8" height="4" fill={hairColor} />
+      <rect x="8" y="5" width="1" height="3" fill={hairColor} />
+      <rect x="17" y="5" width="1" height="3" fill={hairColor} />
+      
+      {/* Head */}
+      <rect x="9" y="7" width="8" height="6" fill={skinColor} />
+      <rect x="8" y="8" width="1" height="4" fill={skinColor} />
+      <rect x="17" y="8" width="1" height="4" fill={skinColor} />
+      
+      {/* Eyes */}
+      <rect x="10" y="9" width="2" height="2" fill="#3e2723" />
+      <rect x="14" y="9" width="2" height="2" fill="#3e2723" />
+      
+      {/* Body sitting */}
+      <rect x="8" y="13" width="10" height="8" fill={shirtColor} />
+      
+      {/* Arms on desk */}
+      <rect x="16" y="16" width="14" height="3" fill={shirtColor} />
+      <rect x="26" y="18" width="4" height="3" fill={skinColor} />
+      
+      {/* Pants */}
+      <rect x="8" y="21" width="10" height="6" fill="#3d5a80" />
+    </svg>
+  );
+}
+
+// Horse standing
+export function HorseSprite({ size = 48 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" style={{ imageRendering: 'pixelated' }}>
+      {/* Body */}
+      <rect x="6" y="12" width="18" height="10" fill="#8d6e63" />
+      <rect x="5" y="14" width="2" height="6" fill="#795548" />
+      <rect x="23" y="14" width="2" height="6" fill="#6d4c41" />
+      
+      {/* Head */}
+      <rect x="0" y="8" width="8" height="8" fill="#8d6e63" />
+      <rect x="0" y="10" width="2" height="4" fill="#795548" />
+      
+      {/* Eye */}
+      <rect x="2" y="10" width="2" height="2" fill="#3e2723" />
+      <rect x="2" y="10" width="1" height="1" fill="#1a1a1a" />
+      
+      {/* Ear */}
+      <rect x="4" y="6" width="3" height="3" fill="#8d6e63" />
+      <rect x="5" y="5" width="2" height="2" fill="#795548" />
+      
+      {/* Mane */}
+      <rect x="6" y="8" width="6" height="4" fill="#5d4037" />
+      <rect x="8" y="6" width="4" height="2" fill="#5d4037" />
+      <rect x="10" y="10" width="8" height="3" fill="#5d4037" />
+      
+      {/* Legs */}
+      <rect x="8" y="21" width="3" height="8" fill="#795548" />
+      <rect x="14" y="21" width="3" height="8" fill="#795548" />
+      <rect x="19" y="21" width="3" height="8" fill="#795548" />
+      
+      {/* Hooves */}
+      <rect x="8" y="28" width="3" height="2" fill="#3e2723" />
+      <rect x="14" y="28" width="3" height="2" fill="#3e2723" />
+      <rect x="19" y="28" width="3" height="2" fill="#3e2723" />
+      
+      {/* Tail */}
+      <rect x="24" y="14" width="4" height="2" fill="#5d4037" />
+      <rect x="26" y="16" width="3" height="4" fill="#5d4037" />
+      <rect x="27" y="20" width="2" height="2" fill="#5d4037" />
+    </svg>
+  );
+}
+
+// Fountain
+export function FountainSprite({ size = 64 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" style={{ imageRendering: 'pixelated' }}>
+      {/* Base pool */}
+      <ellipse cx="24" cy="40" rx="20" ry="6" fill="#90a4ae" />
+      <ellipse cx="24" cy="40" rx="18" ry="5" fill="#4fc3f7" />
+      <ellipse cx="24" cy="38" rx="14" ry="3" fill="#81d4fa" />
+      
+      {/* Middle tier */}
+      <rect x="18" y="28" width="12" height="10" fill="#b0bec5" />
+      <ellipse cx="24" cy="28" rx="8" ry="3" fill="#90a4ae" />
+      <ellipse cx="24" cy="28" rx="6" ry="2" fill="#4fc3f7" />
+      
+      {/* Top tier */}
+      <rect x="21" y="18" width="6" height="10" fill="#b0bec5" />
+      <ellipse cx="24" cy="18" rx="5" ry="2" fill="#90a4ae" />
+      
+      {/* Water spout */}
+      <rect x="22" y="8" width="4" height="10" fill="#4fc3f7" />
+      <rect x="23" y="6" width="2" height="4" fill="#81d4fa" />
+      
+      {/* Water drops falling */}
+      <rect x="16" y="20" width="2" height="3" fill="#4fc3f7" />
+      <rect x="30" y="22" width="2" height="3" fill="#4fc3f7" />
+      <rect x="12" y="32" width="2" height="3" fill="#4fc3f7" />
+      <rect x="34" y="34" width="2" height="3" fill="#4fc3f7" />
+      
+      {/* Grape decoration on top */}
+      <rect x="21" y="3" width="6" height="4" fill="#7b1fa2" />
+      <rect x="22" y="2" width="4" height="2" fill="#9c27b0" />
+      <rect x="23" y="0" width="2" height="2" fill="#4caf50" />
+    </svg>
+  );
+}
+
+// Wine table with bottles and glasses
+export function WineTableSprite({ size = 48 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" style={{ imageRendering: 'pixelated' }}>
+      {/* Table top */}
+      <rect x="2" y="14" width="28" height="4" fill="#8d6e63" />
+      <rect x="3" y="13" width="26" height="1" fill="#a1887f" />
+      
+      {/* Table legs */}
+      <rect x="4" y="18" width="3" height="12" fill="#6d4c41" />
+      <rect x="25" y="18" width="3" height="12" fill="#6d4c41" />
+      
+      {/* Wine bottle */}
+      <rect x="6" y="4" width="5" height="10" fill="#1b5e20" />
+      <rect x="7" y="1" width="3" height="3" fill="#2e7d32" />
+      <rect x="7" y="0" width="3" height="1" fill="#d7ccc8" />
+      <rect x="7" y="7" width="3" height="4" fill="#f5f5dc" />
+      
+      {/* Wine glass 1 */}
+      <rect x="14" y="6" width="5" height="4" fill="#e8eaf6" />
+      <rect x="13" y="7" width="1" height="2" fill="#c5cae9" />
+      <rect x="19" y="7" width="1" height="2" fill="#c5cae9" />
+      <rect x="15" y="8" width="3" height="2" fill="#880e4f" />
+      <rect x="15" y="10" width="3" height="3" fill="#e8eaf6" />
+      <rect x="13" y="13" width="7" height="1" fill="#c5cae9" />
+      
+      {/* Wine glass 2 */}
+      <rect x="22" y="6" width="5" height="4" fill="#e8eaf6" />
+      <rect x="21" y="7" width="1" height="2" fill="#c5cae9" />
+      <rect x="27" y="7" width="1" height="2" fill="#c5cae9" />
+      <rect x="23" y="8" width="3" height="2" fill="#880e4f" />
+      <rect x="23" y="10" width="3" height="3" fill="#e8eaf6" />
+      <rect x="21" y="13" width="7" height="1" fill="#c5cae9" />
+    </svg>
+  );
+}
+
+// Wooden bench
+export function BenchSprite({ size = 40 }: { size?: number }) {
+  return (
+    <svg width={size} height={size * 0.5} viewBox="0 0 32 16" style={{ imageRendering: 'pixelated' }}>
+      {/* Seat */}
+      <rect x="0" y="4" width="32" height="4" fill="#8d6e63" />
+      <rect x="1" y="3" width="30" height="1" fill="#a1887f" />
+      
+      {/* Back rest */}
+      <rect x="2" y="0" width="28" height="3" fill="#8d6e63" />
+      <rect x="3" y="0" width="26" height="1" fill="#a1887f" />
+      
+      {/* Legs */}
+      <rect x="2" y="8" width="4" height="8" fill="#6d4c41" />
+      <rect x="14" y="8" width="4" height="8" fill="#6d4c41" />
+      <rect x="26" y="8" width="4" height="8" fill="#6d4c41" />
+    </svg>
+  );
+}
+
+// Vendimia banner/sign
+export function VendimiaBanner({ size = 80 }: { size?: number }) {
+  return (
+    <svg width={size} height={size * 0.4} viewBox="0 0 64 26" style={{ imageRendering: 'pixelated' }}>
+      {/* Left post */}
+      <rect x="2" y="0" width="4" height="26" fill="#5d4037" />
+      <rect x="0" y="0" width="8" height="4" fill="#8d6e63" />
+      
+      {/* Right post */}
+      <rect x="58" y="0" width="4" height="26" fill="#5d4037" />
+      <rect x="56" y="0" width="8" height="4" fill="#8d6e63" />
+      
+      {/* Banner */}
+      <rect x="6" y="6" width="52" height="14" fill="#8b2942" />
+      <rect x="8" y="8" width="48" height="10" fill="#a13350" />
+      
+      {/* Text "VENDIMIA" */}
+      <rect x="12" y="10" width="40" height="6" fill="#ffd700" />
+      
+      {/* Grape decorations */}
+      <rect x="8" y="4" width="4" height="4" fill="#7b1fa2" />
+      <rect x="9" y="3" width="2" height="2" fill="#4caf50" />
+      <rect x="52" y="4" width="4" height="4" fill="#7b1fa2" />
+      <rect x="53" y="3" width="2" height="2" fill="#4caf50" />
+    </svg>
+  );
+}
+
+// Market stall with awning
+export function MarketStall({ size = 64 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" style={{ imageRendering: 'pixelated' }}>
+      {/* Awning */}
+      <rect x="0" y="0" width="48" height="12" fill="#f59e0b" />
+      <rect x="0" y="0" width="8" height="12" fill="#fbbf24" />
+      <rect x="16" y="0" width="8" height="12" fill="#fbbf24" />
+      <rect x="32" y="0" width="8" height="12" fill="#fbbf24" />
+      
+      {/* Counter */}
+      <rect x="2" y="12" width="44" height="20" fill="#8d6e63" />
+      <rect x="4" y="14" width="40" height="16" fill="#a1887f" />
+      
+      {/* Products - grapes */}
+      <rect x="6" y="16" width="8" height="6" fill="#7b1fa2" />
+      <rect x="8" y="15" width="4" height="2" fill="#4caf50" />
+      
+      {/* Products - bottles */}
+      <rect x="18" y="14" width="4" height="10" fill="#1b5e20" />
+      <rect x="19" y="12" width="2" height="2" fill="#d7ccc8" />
+      <rect x="24" y="14" width="4" height="10" fill="#4a148c" />
+      <rect x="25" y="12" width="2" height="2" fill="#d7ccc8" />
+      
+      {/* Products - barrel */}
+      <rect x="32" y="16" width="10" height="12" fill="#8d6e63" />
+      <rect x="33" y="18" width="8" height="2" fill="#455a64" />
+      <rect x="33" y="24" width="8" height="2" fill="#455a64" />
+      
+      {/* Legs */}
+      <rect x="4" y="32" width="4" height="14" fill="#6d4c41" />
+      <rect x="40" y="32" width="4" height="14" fill="#6d4c41" />
+    </svg>
+  );
+}
+
+// Vineyard rows (isometric style)
+export function VineyardRow({ size = 80 }: { size?: number }) {
+  return (
+    <svg width={size} height={size * 0.5} viewBox="0 0 64 32" style={{ imageRendering: 'pixelated' }}>
+      {/* Ground */}
+      <rect x="0" y="24" width="64" height="8" fill="#c9b896" />
+      
+      {/* Vine posts */}
+      {[0, 16, 32, 48].map((x, i) => (
+        <g key={i}>
+          <rect x={x + 6} y="8" width="2" height="18" fill="#5d4037" />
+          {/* Leaves */}
+          <rect x={x + 2} y="4" width="10" height="6" fill="#4caf50" />
+          <rect x={x + 4} y="2" width="6" height="3" fill="#66bb6a" />
+          {/* Grapes */}
+          <rect x={x + 4} y="10" width="4" height="4" fill="#7b1fa2" />
+          <rect x={x + 6} y="12" width="3" height="4" fill="#9c27b0" />
+        </g>
+      ))}
+      
+      {/* Wire between posts */}
+      <rect x="0" y="10" width="64" height="1" fill="#78909c" />
+      <rect x="0" y="14" width="64" height="1" fill="#78909c" />
+    </svg>
+  );
+}
+
+// Bodega building
+export function BodegaBuilding({ size = 96 }: { size?: number }) {
+  return (
+    <svg width={size} height={size * 0.75} viewBox="0 0 64 48" style={{ imageRendering: 'pixelated' }}>
+      {/* Main building */}
+      <rect x="4" y="16" width="56" height="32" fill="#b0a090" />
+      <rect x="6" y="18" width="52" height="28" fill="#c9b896" />
+      
+      {/* Roof */}
+      <rect x="0" y="8" width="64" height="10" fill="#8b4513" />
+      <rect x="2" y="6" width="60" height="4" fill="#a0522d" />
+      <rect x="4" y="4" width="56" height="3" fill="#8b4513" />
+      
+      {/* Roof tiles pattern */}
+      {[0, 8, 16, 24, 32, 40, 48, 56].map((x, i) => (
+        <rect key={i} x={x + 2} y={i % 2 === 0 ? 8 : 10} width="6" height="4" fill="#cd853f" />
+      ))}
+      
+      {/* Windows */}
+      <rect x="10" y="22" width="8" height="10" fill="#87ceeb" />
+      <rect x="12" y="24" width="4" height="6" fill="#add8e6" />
+      <rect x="46" y="22" width="8" height="10" fill="#87ceeb" />
+      <rect x="48" y="24" width="4" height="6" fill="#add8e6" />
+      
+      {/* Door */}
+      <rect x="26" y="26" width="12" height="20" fill="#5d4037" />
+      <rect x="28" y="28" width="8" height="16" fill="#4e342e" />
+      <rect x="36" y="34" width="2" height="2" fill="#ffd700" />
+      
+      {/* Sign */}
+      <rect x="20" y="12" width="24" height="6" fill="#f5f0e1" />
+      <rect x="22" y="13" width="20" height="4" fill="#8b2942" />
+    </svg>
+  );
+}
+
+// Mountain backdrop
+export function MountainBackdrop({ size = 128 }: { size?: number }) {
+  return (
+    <svg width={size} height={size * 0.4} viewBox="0 0 128 52" style={{ imageRendering: 'pixelated' }}>
+      {/* Far mountains */}
+      <polygon points="0,52 20,20 40,35 60,10 80,25 100,5 120,20 128,15 128,52" fill="#8b9dc3" />
+      
+      {/* Snow caps */}
+      <polygon points="60,10 50,25 70,25" fill="#ffffff" />
+      <polygon points="100,5 88,22 112,22" fill="#ffffff" />
+      
+      {/* Near mountains */}
+      <polygon points="0,52 30,30 50,40 70,25 90,35 110,22 128,30 128,52" fill="#6b7c9c" />
+    </svg>
+  );
+}
+
+// Flag with grape decoration
+export function GrapeFlag({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size * 1.5} viewBox="0 0 16 24" style={{ imageRendering: 'pixelated' }}>
+      {/* Pole */}
+      <rect x="1" y="0" width="2" height="24" fill="#5d4037" />
+      <rect x="0" y="0" width="4" height="2" fill="#8d6e63" />
+      
+      {/* Flag */}
+      <rect x="3" y="2" width="12" height="10" fill="#8b2942" />
+      <rect x="4" y="3" width="10" height="8" fill="#a13350" />
+      
+      {/* Grape on flag */}
+      <rect x="6" y="4" width="4" height="3" fill="#7b1fa2" />
+      <rect x="7" y="6" width="3" height="3" fill="#9c27b0" />
+      <rect x="8" y="3" width="2" height="2" fill="#4caf50" />
+    </svg>
+  );
+}
+
+// Sun sprite
+export function SunSprite({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" style={{ imageRendering: 'pixelated' }}>
+      {/* Rays */}
+      <rect x="10" y="0" width="4" height="4" fill="#ffc107" />
+      <rect x="10" y="20" width="4" height="4" fill="#ffc107" />
+      <rect x="0" y="10" width="4" height="4" fill="#ffc107" />
+      <rect x="20" y="10" width="4" height="4" fill="#ffc107" />
+      
+      {/* Diagonal rays */}
+      <rect x="2" y="2" width="4" height="4" fill="#ffca28" />
+      <rect x="18" y="2" width="4" height="4" fill="#ffca28" />
+      <rect x="2" y="18" width="4" height="4" fill="#ffca28" />
+      <rect x="18" y="18" width="4" height="4" fill="#ffca28" />
+      
+      {/* Core */}
+      <rect x="6" y="6" width="12" height="12" fill="#ffeb3b" />
+      <rect x="8" y="8" width="8" height="8" fill="#fff9c4" />
+    </svg>
+  );
+}
