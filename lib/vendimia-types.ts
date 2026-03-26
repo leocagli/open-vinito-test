@@ -25,6 +25,9 @@ export interface Agent {
   x: number;
   y: number;
   color: string;
+  skinColor?: string;
+  hairColor?: string;
+  shirtColor?: string;
 }
 
 export interface ChatMessage {

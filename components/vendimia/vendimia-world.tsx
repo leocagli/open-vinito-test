@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Agent, ChatMessage } from '@/lib/vendimia-types';
 import { initialAgents, buildings, initialMessages, celebrationMessages, taskLabels } from '@/lib/vendimia-data';
@@ -9,6 +9,9 @@ import { ChatPanel } from './chat-panel';
 import { AgentsSidebar } from './agents-sidebar';
 import { Toolbar } from './toolbar';
 import { TopBar } from './top-bar';
+
+// Unique ID counter for messages
+let messageIdCounter = 100;
 
 export function VendimiaWorld() {
   const [agents, setAgents] = useState<Agent[]>(initialAgents);
@@ -93,9 +96,10 @@ export function VendimiaWorld() {
   };
 
   const addMessage = useCallback((msg: Omit<ChatMessage, 'id' | 'timestamp'>) => {
+    messageIdCounter++;
     const newMessage: ChatMessage = {
       ...msg,
-      id: Date.now().toString(),
+      id: `msg-${messageIdCounter}-${Date.now()}`,
       timestamp: new Date()
     };
     setMessages(prev => [...prev.slice(-20), newMessage]);
@@ -146,70 +150,90 @@ export function VendimiaWorld() {
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-background">
-      {/* Welcome Modal */}
+      {/* Welcome Modal - Pixel art style */}
       <AnimatePresence>
         {showWelcome && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-background/90 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ backgroundColor: 'rgba(35, 30, 25, 0.9)' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="bg-card border-4 border-primary rounded-2xl p-6 md:p-8 max-w-md w-full shadow-2xl"
+              className="max-w-md w-full"
+              style={{
+                backgroundColor: '#f5f0e1',
+                border: '4px solid #4a3728',
+                boxShadow: '8px 8px 0 rgba(0,0,0,0.3)'
+              }}
               initial={{ scale: 0.8, y: 50 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.8, y: 50 }}
             >
-              <div className="text-center">
-                <motion.div
-                  className="text-6xl mb-4"
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  🍇
-                </motion.div>
-                <h1 
-                  className="text-xl md:text-2xl font-bold text-primary mb-4"
-                  style={{ fontFamily: 'var(--font-pixel)' }}
+              {/* Header bar */}
+              <div 
+                className="px-4 py-2 flex items-center gap-2"
+                style={{ backgroundColor: '#8b2942', borderBottom: '3px solid #5c1a2a' }}
+              >
+                <span className="text-2xl">🍇</span>
+                <span 
+                  className="text-base font-bold"
+                  style={{ fontFamily: 'var(--font-vt323)', color: '#ffd700', letterSpacing: '2px' }}
                 >
                   VENDIMIA WORLD
-                </h1>
+                </span>
+              </div>
+
+              {/* Content */}
+              <div className="p-6">
                 <p 
-                  className="text-muted-foreground mb-6 text-sm md:text-base"
-                  style={{ fontFamily: 'var(--font-vt323)' }}
+                  className="mb-6 text-base leading-relaxed"
+                  style={{ fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
                 >
                   Una ciudad de agentes IA inspirada en Mendoza y la vendimia argentina. 
-                  Observa cómo los agentes trabajan en los viñedos, la bodega y el mercado.
+                  Observa como los agentes trabajan en los vinedos, la bodega y el mercado.
                 </p>
-                <div className="space-y-3 mb-6 text-left">
-                  <div className="flex items-center gap-3 text-card-foreground">
-                    <span className="text-xl">👆</span>
-                    <span className="text-sm" style={{ fontFamily: 'var(--font-vt323)' }}>
-                      Toca un agente para ver su información
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3 text-card-foreground">
-                    <span className="text-xl">💬</span>
-                    <span className="text-sm" style={{ fontFamily: 'var(--font-vt323)' }}>
-                      Usa el chat para interactuar
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3 text-card-foreground">
-                    <span className="text-xl">👥</span>
-                    <span className="text-sm" style={{ fontFamily: 'var(--font-vt323)' }}>
-                      Panel de agentes a la derecha
-                    </span>
-                  </div>
+                
+                <div className="space-y-3 mb-6">
+                  {[
+                    { icon: '👆', text: 'Toca un agente para ver su informacion' },
+                    { icon: '💬', text: 'Usa el chat para interactuar' },
+                    { icon: '👥', text: 'Panel de agentes a la derecha' },
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <div 
+                        className="w-8 h-8 flex items-center justify-center"
+                        style={{ backgroundColor: '#4a3728' }}
+                      >
+                        <span className="text-lg">{item.icon}</span>
+                      </div>
+                      <span 
+                        className="text-sm"
+                        style={{ fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
+                      >
+                        {item.text}
+                      </span>
+                    </div>
+                  ))}
                 </div>
+
                 <motion.button
                   onClick={() => setShowWelcome(false)}
-                  className="w-full bg-primary text-primary-foreground py-3 rounded-lg font-bold hover:opacity-90 transition-opacity"
-                  style={{ fontFamily: 'var(--font-pixel)' }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  className="w-full py-3 font-bold"
+                  style={{ 
+                    fontFamily: 'var(--font-vt323)',
+                    fontSize: '18px',
+                    backgroundColor: '#4a3728',
+                    color: '#f5f0e1',
+                    border: '3px solid #2a1f18',
+                    boxShadow: '3px 3px 0 rgba(0,0,0,0.3)',
+                    letterSpacing: '2px'
+                  }}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ y: 2, boxShadow: '1px 1px 0 rgba(0,0,0,0.3)' }}
                 >
-                  ¡COMENZAR!
+                  COMENZAR
                 </motion.button>
               </div>
             </motion.div>

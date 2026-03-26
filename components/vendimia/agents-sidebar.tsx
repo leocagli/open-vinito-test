@@ -11,6 +11,42 @@ interface AgentsSidebarProps {
   onAgentSelect: (agent: Agent) => void;
 }
 
+// Pixel art avatar component
+function PixelAvatar({ agent, size = 'normal' }: { agent: Agent; size?: 'normal' | 'small' }) {
+  const dimensions = size === 'small' ? { head: 'w-6 h-6', body: 'w-7 h-4' } : { head: 'w-8 h-8', body: 'w-9 h-5' };
+  
+  return (
+    <div className="flex flex-col items-center">
+      {/* Head */}
+      <div 
+        className={`${dimensions.head} relative`}
+        style={{
+          backgroundColor: agent.skinColor || '#e8c39e',
+          border: '2px solid #4a3728'
+        }}
+      >
+        {/* Hair */}
+        <div 
+          className="absolute -top-1 left-0 right-0 h-1.5"
+          style={{ backgroundColor: agent.hairColor || '#5c4033' }}
+        />
+        {/* Eyes */}
+        <div className="absolute top-2.5 left-1 w-1 h-1 bg-black" />
+        <div className="absolute top-2.5 right-1 w-1 h-1 bg-black" />
+      </div>
+      {/* Body */}
+      <div 
+        className={`${dimensions.body} -mt-0.5`}
+        style={{
+          backgroundColor: agent.shirtColor || '#4a6fa5',
+          border: '2px solid #4a3728',
+          borderTop: 'none'
+        }}
+      />
+    </div>
+  );
+}
+
 export function AgentsSidebar({ agents, selectedAgent, onAgentSelect }: AgentsSidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -26,57 +62,76 @@ export function AgentsSidebar({ agents, selectedAgent, onAgentSelect }: AgentsSi
 
   return (
     <>
-      {/* Toggle Button */}
+      {/* Toggle Button for mobile */}
       <motion.button
-        className="absolute top-4 right-4 z-30 md:hidden bg-card/90 backdrop-blur-sm p-3 rounded-lg border-2 border-border shadow-lg"
+        className="absolute top-4 right-4 z-30 md:hidden"
         onClick={() => setIsOpen(!isOpen)}
         whileTap={{ scale: 0.95 }}
+        style={{
+          backgroundColor: '#3d3530',
+          border: '2px solid #4a3728',
+          padding: '8px 12px',
+          boxShadow: '3px 3px 0 rgba(0,0,0,0.3)'
+        }}
       >
-        <span className="text-xl">👥</span>
+        <span 
+          style={{ 
+            fontFamily: 'var(--font-vt323)',
+            color: '#f5f0e1',
+            fontSize: '14px'
+          }}
+        >
+          Avatar
+        </span>
       </motion.button>
 
       {/* Sidebar */}
-      <motion.div
-        className={`
-          absolute top-0 right-0 h-full z-20
-          md:relative md:w-64 md:flex-shrink-0
-          ${isOpen ? 'w-64' : 'w-0 md:w-64'}
-        `}
-        initial={{ x: 100, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ delay: 0.6 }}
-      >
-        <AnimatePresence>
-          {showSidebar && (
-            <motion.div
-              className="h-full w-64 bg-card/95 backdrop-blur-md border-l-2 border-border shadow-2xl overflow-hidden"
-              initial={{ x: isMobile ? 100 : 0, opacity: isMobile ? 0 : 1 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: 100, opacity: 0 }}
+      <AnimatePresence>
+        {showSidebar && (
+          <motion.div
+            className="absolute top-4 right-4 z-20 md:top-4 md:right-4"
+            initial={{ x: isMobile ? 100 : 0, opacity: isMobile ? 0 : 1 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: 100, opacity: 0 }}
+            transition={{ type: 'spring', damping: 25 }}
+          >
+            <div 
+              className="w-48 overflow-hidden"
+              style={{
+                backgroundColor: '#3d3530',
+                border: '3px solid #4a3728',
+                boxShadow: '4px 4px 0 rgba(0,0,0,0.3)'
+              }}
             >
               {/* Header */}
-              <div className="p-4 border-b border-border bg-card">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">🍇</span>
-                    <h2 
-                      className="text-sm font-bold text-card-foreground"
-                      style={{ fontFamily: 'var(--font-pixel)' }}
-                    >
-                      Agentes
-                    </h2>
-                  </div>
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="md:hidden text-muted-foreground hover:text-foreground"
-                  >
-                    ✕
-                  </button>
-                </div>
+              <div 
+                className="flex items-center justify-between px-3 py-2"
+                style={{ 
+                  backgroundColor: '#4a3728',
+                  borderBottom: '2px solid #2a1f18'
+                }}
+              >
+                <span 
+                  style={{ 
+                    fontFamily: 'var(--font-vt323)',
+                    color: '#f5f0e1',
+                    fontSize: '16px',
+                    letterSpacing: '1px'
+                  }}
+                >
+                  Avatar
+                </span>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="md:hidden hover:opacity-80"
+                  style={{ color: '#f5f0e1' }}
+                >
+                  x
+                </button>
               </div>
 
               {/* Agents List */}
-              <div className="p-3 space-y-2 overflow-y-auto h-[calc(100%-60px)]">
+              <div className="p-2 space-y-1 max-h-80 overflow-y-auto">
                 {agents.map((agent, index) => {
                   const taskInfo = taskLabels[agent.task];
                   const isSelected = selectedAgent?.id === agent.id;
@@ -84,89 +139,78 @@ export function AgentsSidebar({ agents, selectedAgent, onAgentSelect }: AgentsSi
                   return (
                     <motion.button
                       key={agent.id}
-                      initial={{ x: 20, opacity: 0 }}
+                      initial={{ x: 10, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
-                      transition={{ delay: 0.1 * index }}
+                      transition={{ delay: 0.05 * index }}
                       onClick={() => {
                         onAgentSelect(agent);
-                        setIsOpen(false);
+                        if (isMobile) setIsOpen(false);
                       }}
-                      className={`
-                        w-full p-3 rounded-lg border-2 transition-all text-left
-                        ${isSelected 
-                          ? 'border-primary bg-primary/20 shadow-lg' 
-                          : 'border-border bg-card/50 hover:border-primary/50 hover:bg-muted/50'
-                        }
-                      `}
+                      className="w-full flex items-center gap-2 px-2 py-1.5 text-left transition-colors"
+                      style={{
+                        backgroundColor: isSelected ? '#5a4a3a' : 'transparent',
+                        borderLeft: isSelected ? '3px solid #8b5cf6' : '3px solid transparent'
+                      }}
                     >
-                      <div className="flex items-center gap-3">
-                        {/* Avatar */}
+                      {/* Avatar */}
+                      <PixelAvatar agent={agent} size="small" />
+
+                      {/* Info */}
+                      <div className="flex-1 min-w-0">
                         <div 
-                          className="w-10 h-10 rounded-lg flex items-center justify-center text-lg shadow-md"
-                          style={{ backgroundColor: agent.color }}
+                          className="truncate"
+                          style={{ 
+                            fontFamily: 'var(--font-vt323)',
+                            color: '#f5f0e1',
+                            fontSize: '14px'
+                          }}
                         >
-                          {agent.avatar}
+                          {agent.name}
                         </div>
-
-                        {/* Info */}
-                        <div className="flex-1 min-w-0">
-                          <div 
-                            className="text-sm font-bold text-card-foreground truncate"
-                            style={{ fontFamily: 'var(--font-vt323)' }}
-                          >
-                            {agent.name}
-                          </div>
-                          <div className="flex items-center gap-1 mt-0.5">
-                            <span className="text-xs">{taskInfo.icon}</span>
-                            <span 
-                              className="text-xs text-muted-foreground"
-                              style={{ fontFamily: 'var(--font-vt323)' }}
-                            >
-                              {taskInfo.label}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Status indicator */}
-                        <div className="flex flex-col items-end gap-1">
-                          <motion.div
-                            className="w-2 h-2 rounded-full"
-                            style={{ backgroundColor: agent.color }}
-                            animate={{ opacity: [0.5, 1, 0.5] }}
-                            transition={{ duration: 1.5, repeat: Infinity }}
-                          />
+                        <div className="flex items-center gap-1">
+                          <span className="text-xs">{taskInfo.icon}</span>
                           <span 
-                            className="text-xs text-muted-foreground"
-                            style={{ fontFamily: 'var(--font-vt323)' }}
+                            style={{ 
+                              fontFamily: 'var(--font-vt323)',
+                              color: '#9ca3af',
+                              fontSize: '12px'
+                            }}
                           >
-                            {agent.progress}%
+                            {taskInfo.label}
                           </span>
                         </div>
                       </div>
 
-                      {/* Progress bar */}
-                      <div className="mt-2 h-1.5 bg-muted rounded-full overflow-hidden">
-                        <motion.div
-                          className="h-full rounded-full"
-                          style={{ backgroundColor: agent.color }}
-                          initial={{ width: 0 }}
-                          animate={{ width: `${agent.progress}%` }}
-                          transition={{ duration: 1, delay: 0.1 * index }}
+                      {/* Progress bar mini */}
+                      <div 
+                        className="w-12 h-2"
+                        style={{
+                          backgroundColor: '#2a2520',
+                          border: '1px solid #4a3728'
+                        }}
+                      >
+                        <div 
+                          className="h-full transition-all"
+                          style={{ 
+                            width: `${agent.progress}%`,
+                            backgroundColor: agent.color
+                          }}
                         />
                       </div>
                     </motion.button>
                   );
                 })}
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Mobile overlay */}
-      {isOpen && (
+      {isOpen && isMobile && (
         <motion.div
-          className="fixed inset-0 bg-background/50 z-10 md:hidden"
+          className="fixed inset-0 z-10"
+          style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

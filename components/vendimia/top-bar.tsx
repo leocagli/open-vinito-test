@@ -11,74 +11,89 @@ interface TopBarProps {
 export function TopBar({ season, day, totalGrapes }: TopBarProps) {
   return (
     <motion.div
-      className="absolute top-0 left-0 right-0 z-10 pointer-events-none"
+      className="absolute top-0 left-0 z-10 pointer-events-none"
       initial={{ y: -50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.2 }}
     >
-      <div className="flex items-center justify-between p-2 md:p-4">
-        {/* Logo */}
-        <div className="bg-primary/90 backdrop-blur-sm px-3 py-2 md:px-4 md:py-2 rounded-lg border-2 border-primary shadow-lg pointer-events-auto">
-          <div className="flex items-center gap-2">
-            <span className="text-xl md:text-2xl">🍇</span>
+      <div className="p-2 md:p-3">
+        {/* Logo - Pixel style */}
+        <div 
+          className="px-3 py-2 pointer-events-auto flex items-center gap-2"
+          style={{
+            backgroundColor: '#8b2942',
+            border: '3px solid #5c1a2a',
+            boxShadow: '3px 3px 0 rgba(0,0,0,0.3)'
+          }}
+        >
+          <span className="text-xl">🍇</span>
+          <span 
+            className="text-xs md:text-sm font-bold tracking-wider"
+            style={{ 
+              fontFamily: 'var(--font-vt323)',
+              color: '#ffd700',
+              letterSpacing: '1px'
+            }}
+          >
+            VENDIMIA WORLD
+          </span>
+        </div>
+
+        {/* Stats row */}
+        <div className="flex gap-1 mt-1">
+          {/* Day counter */}
+          <div 
+            className="px-2 py-1 pointer-events-auto flex items-center gap-1"
+            style={{
+              backgroundColor: '#f5f0e1',
+              border: '2px solid #4a3728',
+              boxShadow: '2px 2px 0 rgba(0,0,0,0.2)'
+            }}
+          >
+            <span className="text-sm">📅</span>
             <span 
-              className="text-xs md:text-sm font-bold text-primary-foreground tracking-wider"
-              style={{ fontFamily: 'var(--font-pixel)' }}
+              className="text-xs"
+              style={{ fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
             >
-              VENDIMIA WORLD
+              Dia {day}
+            </span>
+          </div>
+
+          {/* Grapes counter */}
+          <div 
+            className="px-2 py-1 pointer-events-auto flex items-center gap-1"
+            style={{
+              backgroundColor: '#f5f0e1',
+              border: '2px solid #4a3728',
+              boxShadow: '2px 2px 0 rgba(0,0,0,0.2)'
+            }}
+          >
+            <span className="text-sm">🍇</span>
+            <span 
+              className="text-xs font-bold"
+              style={{ fontFamily: 'var(--font-vt323)', color: '#7c3aed' }}
+            >
+              {totalGrapes.toLocaleString()}
             </span>
           </div>
         </div>
 
-        {/* Stats - Hidden on very small screens */}
-        <div className="hidden sm:flex items-center gap-2 md:gap-4">
-          {/* Season */}
-          <motion.div 
-            className="bg-card/90 backdrop-blur-sm px-3 py-2 rounded-lg border border-border shadow-lg pointer-events-auto"
-            whileHover={{ scale: 1.05 }}
+        {/* Season indicator - hidden on small screens */}
+        <div 
+          className="hidden sm:flex px-2 py-1 mt-1 pointer-events-auto items-center gap-1"
+          style={{
+            backgroundColor: '#f5f0e1',
+            border: '2px solid #4a3728',
+            boxShadow: '2px 2px 0 rgba(0,0,0,0.2)'
+          }}
+        >
+          <span className="text-sm">🌞</span>
+          <span 
+            className="text-xs"
+            style={{ fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
           >
-            <div className="flex items-center gap-2">
-              <span>🌞</span>
-              <span 
-                className="text-xs md:text-sm text-card-foreground"
-                style={{ fontFamily: 'var(--font-vt323)' }}
-              >
-                {season}
-              </span>
-            </div>
-          </motion.div>
-
-          {/* Day */}
-          <motion.div 
-            className="bg-card/90 backdrop-blur-sm px-3 py-2 rounded-lg border border-border shadow-lg pointer-events-auto"
-            whileHover={{ scale: 1.05 }}
-          >
-            <div className="flex items-center gap-2">
-              <span>📅</span>
-              <span 
-                className="text-xs md:text-sm text-card-foreground"
-                style={{ fontFamily: 'var(--font-vt323)' }}
-              >
-                Día {day}
-              </span>
-            </div>
-          </motion.div>
-
-          {/* Grapes collected */}
-          <motion.div 
-            className="bg-accent/90 backdrop-blur-sm px-3 py-2 rounded-lg border border-accent shadow-lg pointer-events-auto"
-            whileHover={{ scale: 1.05 }}
-          >
-            <div className="flex items-center gap-2">
-              <span>🍇</span>
-              <span 
-                className="text-xs md:text-sm font-bold text-accent-foreground"
-                style={{ fontFamily: 'var(--font-vt323)' }}
-              >
-                {totalGrapes.toLocaleString()} kg
-              </span>
-            </div>
-          </motion.div>
+            {season}
+          </span>
         </div>
       </div>
     </motion.div>
