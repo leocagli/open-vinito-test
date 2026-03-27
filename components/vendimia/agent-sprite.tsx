@@ -27,6 +27,13 @@ const CAMILA_SPRITES = {
   right: '/sprites/camila-right.png',
 };
 
+const VENDEDOR_SPRITES = {
+  front: '/sprites/vendedor-front.png',
+  back: '/sprites/vendedor-back.png',
+  left: '/sprites/vendedor-left.png',
+  right: '/sprites/vendedor-right.png',
+};
+
 export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
   const [walkFrame, setWalkFrame] = useState(0);
   const [direction, setDirection] = useState<'front' | 'back' | 'left' | 'right'>('front');
