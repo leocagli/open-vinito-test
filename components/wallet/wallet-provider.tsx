@@ -67,13 +67,26 @@ export function WalletProvider({ children, initialState }: WalletProviderProps) 
 
 // Export hook to check if AppKit is ready
 export function useAppKitReady() {
-  const [ready, setReady] = useState(appKitInitialized)
+  const [ready, setReady] = useState(false)
   
   useEffect(() => {
-    if (appKitInitialized) {
-      setReady(true)
+    // Check immediately and also after a short delay to catch late initialization
+    const checkReady = () => {
+      if (appKitInitialized && projectId) {
+        setReady(true)
+      }
+    }
+    
+    checkReady()
+    const timer = setTimeout(checkReady, 500)
+    const timer2 = setTimeout(checkReady, 1500)
+    
+    return () => {
+      clearTimeout(timer)
+      clearTimeout(timer2)
     }
   }, [])
   
-  return ready && !!projectId
+  // Always return true if projectId exists - let the modal handle errors
+  return !!projectId
 }
