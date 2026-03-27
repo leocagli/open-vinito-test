@@ -2,22 +2,22 @@ import type { Agent, ChatMessage, Building } from './vendimia-types';
 
 export const initialAgents: Agent[] = [
   // Vinedo - cosecha, riego, poda
-  { id: '1', name: 'Valentina', avatar: '👩‍🌾', task: 'cosecha', location: 'viñedo-norte', progress: 75, x: 25, y: 45, color: '#8B5CF6', skinColor: '#e8c39e', hairColor: '#5c3d2e', shirtColor: '#4a6fa5' },
-  { id: '2', name: 'Martin', avatar: '👨‍🌾', task: 'riego', location: 'viñedo-sur', progress: 45, x: 65, y: 55, color: '#3B82F6', skinColor: '#d4a574', hairColor: '#2c1810', shirtColor: '#4a6fa5' },
-  { id: '3', name: 'Camila', avatar: '👩‍🌾', task: 'poda', location: 'viñedo-norte', progress: 30, x: 45, y: 65, color: '#10B981', skinColor: '#c9a86c', hairColor: '#1a1a1a', shirtColor: '#2d5a27' },
+  { id: '1', name: 'Valentina', avatar: '👩‍🌾', task: 'cosecha', location: 'vinedo', progress: 75, x: 25, y: 45, color: '#8B5CF6', skinColor: '#e8c39e', hairColor: '#5c3d2e', shirtColor: '#4a6fa5' },
+  { id: '2', name: 'Martin', avatar: '👨‍🌾', task: 'riego', location: 'vinedo', progress: 45, x: 65, y: 55, color: '#3B82F6', skinColor: '#d4a574', hairColor: '#2c1810', shirtColor: '#4a6fa5' },
+  { id: '3', name: 'Camila', avatar: '👩‍🌾', task: 'poda', location: 'vinedo', progress: 30, x: 45, y: 65, color: '#10B981', skinColor: '#c9a86c', hairColor: '#1a1a1a', shirtColor: '#2d5a27' },
   
   // Fermentacion - fermentacion, embotellado
   { id: '4', name: 'Lucia', avatar: '👩‍🔬', task: 'fermentacion', location: 'bodega', progress: 90, x: 30, y: 50, color: '#EC4899', skinColor: '#f5d6c6', hairColor: '#8b4513', shirtColor: '#f5f5dc' },
   { id: '5', name: 'Santiago', avatar: '👨‍🍳', task: 'embotellado', location: 'bodega', progress: 55, x: 70, y: 60, color: '#6366F1', skinColor: '#d4a574', hairColor: '#4a3728', shirtColor: '#f5f5dc' },
   
-  // Oficina - administracion, contabilidad, marketing, cata
+  // Oficina - solo tareas administrativas y gestion
   { id: '6', name: 'Diego', avatar: '👨‍💼', task: 'administracion', location: 'oficina', progress: 60, x: 35, y: 55, color: '#F59E0B', skinColor: '#e8c39e', hairColor: '#3d2914', shirtColor: '#8b2942' },
   { id: '7', name: 'Elena', avatar: '👩‍💼', task: 'contabilidad', location: 'oficina', progress: 80, x: 65, y: 45, color: '#8B5CF6', skinColor: '#f5d6c6', hairColor: '#5c3d2e', shirtColor: '#2d5a27' },
-  { id: '8', name: 'Roberto', avatar: '👨‍💻', task: 'cata', location: 'oficina', progress: 40, x: 50, y: 70, color: '#3B82F6', skinColor: '#d4a574', hairColor: '#2c1810', shirtColor: '#4a6fa5' },
   
-  // Plaza - venta, espera
-  { id: '9', name: 'Carmen', avatar: '👩‍🍳', task: 'venta', location: 'plaza', progress: 65, x: 40, y: 50, color: '#EC4899', skinColor: '#e8c39e', hairColor: '#8b4513', shirtColor: '#8b2942' },
-  { id: '10', name: 'Pedro', avatar: '👨‍🌾', task: 'espera', location: 'plaza', progress: 0, x: 60, y: 55, color: '#10B981', skinColor: '#c9a86c', hairColor: '#3d2914', shirtColor: '#f5f5dc' },
+  // Plaza - venta, cata, espera
+  { id: '8', name: 'Roberto', avatar: '👨‍🍷', task: 'cata', location: 'plaza', progress: 40, x: 30, y: 45, color: '#3B82F6', skinColor: '#d4a574', hairColor: '#2c1810', shirtColor: '#4a6fa5' },
+  { id: '9', name: 'Carmen', avatar: '👩‍🍳', task: 'venta', location: 'plaza', progress: 65, x: 50, y: 55, color: '#EC4899', skinColor: '#e8c39e', hairColor: '#8b4513', shirtColor: '#8b2942' },
+  { id: '10', name: 'Pedro', avatar: '👨‍🌾', task: 'espera', location: 'plaza', progress: 0, x: 70, y: 50, color: '#10B981', skinColor: '#c9a86c', hairColor: '#3d2914', shirtColor: '#f5f5dc' },
 ];
 
 export const buildings: Building[] = [
@@ -35,12 +35,12 @@ export const taskLabels: Record<string, { label: string; icon: string }> = {
   // Fermentacion
   fermentacion: { label: 'Fermentacion', icon: '🧪' },
   embotellado: { label: 'Embotellado', icon: '🍾' },
-  // Oficina
-  cata: { label: 'Cata', icon: '🍷' },
+  // Oficina - solo administrativas
   administracion: { label: 'Administracion', icon: '📋' },
   contabilidad: { label: 'Contabilidad', icon: '📊' },
   marketing: { label: 'Marketing', icon: '📢' },
-  // Plaza
+  // Plaza - cata, venta, espera
+  cata: { label: 'Cata', icon: '🍷' },
   venta: { label: 'Venta', icon: '💰' },
   espera: { label: 'En espera', icon: '⏳' },
   descanso: { label: 'Descanso', icon: '😴' },
@@ -71,12 +71,12 @@ export const taskToScene: Record<string, string> = {
   // Fermentacion - produccion de vino
   fermentacion: 'fermentacion',
   embotellado: 'fermentacion',
-  // Oficina - tareas administrativas
-  cata: 'oficina',
+  // Oficina - solo tareas administrativas y gestion
   administracion: 'oficina',
   contabilidad: 'oficina',
   marketing: 'oficina',
-  // Plaza - venta y espera
+  // Plaza - cata, venta y espera
+  cata: 'plaza-central',
   venta: 'plaza-central',
   espera: 'plaza-central',
   descanso: 'plaza-central',

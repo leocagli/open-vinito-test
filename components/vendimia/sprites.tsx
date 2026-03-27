@@ -435,8 +435,9 @@ export function TaskLabel({
     descanso: { icon: GrapeIcon, label: 'Descanso', color: '#9e9e9e' },
   };
   
-  const config = taskConfig[task] || { icon: GrapeIcon, label: task, color: '#9e9e9e' };
-  const Icon = config.icon;
+  const defaultConfig = { icon: GrapeIcon, label: task || 'Tarea', color: '#9e9e9e' };
+  const config = task && taskConfig[task] ? taskConfig[task] : defaultConfig;
+  const Icon = config.icon || GrapeIcon;
   
   return (
     <div 
