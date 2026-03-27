@@ -15,3 +15,8 @@ node_modules
 .next/
 .DS_Store
 .vercel
+
+# Rust / Cargo build artifacts
+target/
+contracts/stellar/*/target/
+.cargo/config.toml
