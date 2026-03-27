@@ -262,13 +262,15 @@ export function VendimiaWorld() {
       <div className="flex h-full">
         {/* Game World */}
         <div className="flex-1 relative">
-          <TopBar 
-            season={getSeason()} 
-            day={day} 
-            totalGrapes={totalGrapes} 
-            currentScene={currentScene}
-            onSceneChange={setCurrentScene}
-          />
+          {!showWelcome && (
+            <TopBar 
+              season={getSeason()} 
+              day={day} 
+              totalGrapes={totalGrapes} 
+              currentScene={currentScene}
+              onSceneChange={setCurrentScene}
+            />
+          )}
           
           <GameWorld
             agents={getAgentsForScene(agents, currentScene)}
@@ -277,23 +279,29 @@ export function VendimiaWorld() {
             currentScene={currentScene}
           />
 
-          <ChatPanel
-            messages={messages}
-            onSendMessage={handleSendMessage}
-          />
+          {!showWelcome && (
+            <ChatPanel
+              messages={messages}
+              onSendMessage={handleSendMessage}
+            />
+          )}
 
-          <Toolbar
-            onToolSelect={handleToolSelect}
-            activeTool={activeTool}
-          />
+          {!showWelcome && (
+            <Toolbar
+              onToolSelect={handleToolSelect}
+              activeTool={activeTool}
+            />
+          )}
         </div>
 
         {/* Sidebar */}
-        <AgentsSidebar
-          agents={agents}
-          selectedAgent={selectedAgent}
-          onAgentSelect={handleAgentClick}
-        />
+        {!showWelcome && (
+          <AgentsSidebar
+            agents={agents}
+            selectedAgent={selectedAgent}
+            onAgentSelect={handleAgentClick}
+          />
+        )}
       </div>
 
       {/* Selected Agent Detail - Mobile */}
