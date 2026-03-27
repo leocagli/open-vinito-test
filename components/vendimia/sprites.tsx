@@ -435,10 +435,11 @@ export function TaskLabel({
     descanso: { icon: GrapeIcon, label: 'Descanso', color: '#9e9e9e' },
   };
   
-  // Configuración segura con fallback
-  const defaultConfig = { icon: GrapeIcon, label: 'Tarea', color: '#9e9e9e' };
-  const config = (taskConfig as any)[task] || defaultConfig;
-  const Icon = (config?.icon) || GrapeIcon;
+  // Configuración segura con fallback - siempre retorna un config valido
+  const safeConfig = task && typeof task === 'string' && taskConfig[task] 
+    ? taskConfig[task] 
+    : { icon: GrapeIcon, label: task || 'Tarea', color: '#9e9e9e' };
+  const Icon = safeConfig.icon;
   
   return (
     <div 
@@ -456,9 +457,9 @@ export function TaskLabel({
           className="text-xs font-bold"
           style={{ color: '#4a3728', fontFamily: 'var(--font-vt323)', letterSpacing: '1px' }}
         >
-          {config.label}
+          {safeConfig.label}
         </span>
-        <ProgressBar progress={progress} color={config.color} width={50} height={6} />
+        <ProgressBar progress={progress} color={safeConfig.color} width={50} height={6} />
       </div>
     </div>
   );

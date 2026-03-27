@@ -41,6 +41,13 @@ const NPC005_SPRITES = {
   right: '/sprites/npc005-right.png',
 };
 
+const NPC006_SPRITES = {
+  front: '/sprites/npc006-front.png',
+  back: '/sprites/npc006-back.png',
+  left: '/sprites/npc006-left.png',
+  right: '/sprites/npc006-right.png',
+};
+
 export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
   const [walkFrame, setWalkFrame] = useState(0);
   const [direction, setDirection] = useState<'front' | 'back' | 'left' | 'right'>('front');
@@ -67,7 +74,7 @@ export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
 
   // Cambiar direccion aleatoriamente para agentes con sprites de imagen
   useEffect(() => {
-    if (agent.id === '1' || agent.id === '3' || agent.id === '9' || agent.id === '11') {
+    if (agent.id === '1' || agent.id === '3' || agent.id === '5' || agent.id === '9' || agent.id === '11') {
       const dirInterval = setInterval(() => {
         const dirs: Array<'front' | 'back' | 'left' | 'right'> = ['front', 'back', 'left', 'right'];
         setDirection(dirs[Math.floor(Math.random() * dirs.length)]);
@@ -140,6 +147,22 @@ export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
     );
   }
 
+  // Sprite de imagen para NPC006/Santiago embotellado (id: 5)
+  function getNPC006Sprite() {
+    return (
+      <div className="relative w-11 h-14" style={{ imageRendering: 'pixelated' }}>
+        <Image
+          src={NPC006_SPRITES[direction]}
+          alt="Santiago"
+          fill
+          className="object-contain"
+          style={{ imageRendering: 'pixelated' }}
+          priority
+        />
+      </div>
+    );
+  }
+
   // Select sprite based on task (para otros agentes)
   function getWorkerSprite() {
     // Si es Valentina, usar el sprite de imagen
@@ -150,6 +173,11 @@ export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
     // Si es Camila, usar el sprite de imagen
     if (agent.id === '3') {
       return getCamilaSprite();
+    }
+
+    // Si es Santiago (NPC006 embotellado), usar el sprite de bodega
+    if (agent.id === '5') {
+      return getNPC006Sprite();
     }
 
     // Si es Fernando (vendedor), usar el sprite del vendedor
