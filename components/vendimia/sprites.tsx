@@ -409,82 +409,26 @@ export function ProgressBar({
 }
 
 // Task label bubble
-export function TaskLabel(props: { 
-  task: string;
-  progress: number;
-}) {
-  const { task, progress } = props;
-  
-  // Validar que task sea string valido
-  if (!task || typeof task !== 'string') {
-    return (
-      <div 
-        className="flex items-center gap-2 px-3 py-1.5"
-        style={{
-          backgroundColor: '#f5f0e1',
-          border: '2px solid #4a3728',
-          borderRadius: '4px',
-          boxShadow: '2px 2px 0 rgba(0,0,0,0.2)'
-        }}
-      >
-        <GrapeIcon size={18} />
-        <div className="flex flex-col gap-0.5">
-          <span 
-            className="text-xs font-bold"
-            style={{ color: '#4a3728', fontFamily: 'var(--font-vt323)', letterSpacing: '1px' }}
-          >
-            Tarea
-          </span>
-          <ProgressBar progress={progress} color="#9e9e9e" width={50} height={6} />
-        </div>
-      </div>
-    );
-  }
-
-  const taskConfig: Record<string, { icon: React.FC<{ size?: number }>; label: string; color: string }> = {
-    cosecha: { icon: GrapeIcon, label: 'Cosecha', color: '#4caf50' },
-    riego: { icon: WateringCanIcon, label: 'Riego', color: '#4caf50' },
-    poda: { icon: PruningIcon, label: 'Poda', color: '#4caf50' },
-    fermentacion: { icon: BarrelIcon, label: 'Fermentacion', color: '#ff9800' },
-    embotellado: { icon: BottleIcon, label: 'Embotellado', color: '#ff9800' },
-    cata: { icon: WineGlassIcon, label: 'Cata', color: '#9c27b0' },
-    atención: { icon: GrapeIcon, label: 'Atención', color: '#dc2626' },
-    administracion: { icon: BottleIcon, label: 'Admin', color: '#2196f3' },
-    contabilidad: { icon: BottleIcon, label: 'Contabilidad', color: '#2196f3' },
-    marketing: { icon: BottleIcon, label: 'Marketing', color: '#2196f3' },
-    venta: { icon: GrapeIcon, label: 'Venta', color: '#e91e63' },
-    espera: { icon: GrapeIcon, label: 'Espera', color: '#9e9e9e' },
-    descanso: { icon: GrapeIcon, label: 'Descanso', color: '#9e9e9e' },
+// Task Label - Muestra etiqueta de tarea con ícono y barra de progreso
+export function TaskLabel({ task, progress }: { task?: string; progress: number }) {
+  // Mapeo seguro de tareas a iconos
+  const getTaskConfig = (t?: string) => {
+    const config: Record<string, { icon: React.FC<{ size?: number }>; label: string; color: string }> = {
+      cosecha: { icon: GrapeIcon, label: 'Cosecha', color: '#4caf50' },
+      poda: { icon: PruningIcon, label: 'Poda', color: '#4caf50' },
+      embotellado: { icon: BottleIcon, label: 'Embotellado', color: '#ff9800' },
+      cata: { icon: WineGlassIcon, label: 'Cata', color: '#9c27b0' },
+      atención: { icon: GrapeIcon, label: 'Atención', color: '#dc2626' },
+      venta: { icon: GrapeIcon, label: 'Venta', color: '#e91e63' },
+      espera: { icon: GrapeIcon, label: 'Espera', color: '#9e9e9e' },
+      descanso: { icon: GrapeIcon, label: 'Descanso', color: '#9e9e9e' },
+    };
+    return config[t ?? ''] ?? { icon: GrapeIcon, label: t ?? 'Tarea', color: '#9e9e9e' };
   };
 
-  const config = taskConfig[task];
-  if (!config) {
-    return (
-      <div 
-        className="flex items-center gap-2 px-3 py-1.5"
-        style={{
-          backgroundColor: '#f5f0e1',
-          border: '2px solid #4a3728',
-          borderRadius: '4px',
-          boxShadow: '2px 2px 0 rgba(0,0,0,0.2)'
-        }}
-      >
-        <GrapeIcon size={18} />
-        <div className="flex flex-col gap-0.5">
-          <span 
-            className="text-xs font-bold"
-            style={{ color: '#4a3728', fontFamily: 'var(--font-vt323)', letterSpacing: '1px' }}
-          >
-            {task}
-          </span>
-          <ProgressBar progress={progress} color="#9e9e9e" width={50} height={6} />
-        </div>
-      </div>
-    );
-  }
+  const taskInfo = getTaskConfig(task);
+  const Icon = taskInfo.icon;
 
-  const Icon = config.icon;
-  
   return (
     <div 
       className="flex items-center gap-2 px-3 py-1.5"
@@ -501,9 +445,9 @@ export function TaskLabel(props: {
           className="text-xs font-bold"
           style={{ color: '#4a3728', fontFamily: 'var(--font-vt323)', letterSpacing: '1px' }}
         >
-          {config.label}
+          {taskInfo.label}
         </span>
-        <ProgressBar progress={progress} color={config.color} width={50} height={6} />
+        <ProgressBar progress={progress} color={taskInfo.color} width={50} height={6} />
       </div>
     </div>
   );

@@ -3,21 +3,14 @@ import type { Agent, ChatMessage, Building } from './vendimia-types';
 export const initialAgents: Agent[] = [
   // Vinedo - cosecha, riego, poda
   { id: '1', name: 'Valentina', avatar: '👩‍🌾', task: 'cosecha', location: 'vinedo', progress: 75, x: 25, y: 45, color: '#8B5CF6', skinColor: '#e8c39e', hairColor: '#5c3d2e', shirtColor: '#4a6fa5' },
-  { id: '2', name: 'Martin', avatar: '👨‍🌾', task: 'riego', location: 'vinedo', progress: 45, x: 65, y: 55, color: '#3B82F6', skinColor: '#d4a574', hairColor: '#2c1810', shirtColor: '#4a6fa5' },
   { id: '3', name: 'Camila', avatar: '👩‍🌾', task: 'poda', location: 'vinedo', progress: 30, x: 45, y: 65, color: '#10B981', skinColor: '#c9a86c', hairColor: '#1a1a1a', shirtColor: '#2d5a27' },
   { id: '11', name: 'Tomas', avatar: '👨‍🌾', task: 'cosecha', location: 'vinedo', progress: 55, x: 75, y: 45, color: '#F59E0B', skinColor: '#d4a574', hairColor: '#8b4513', shirtColor: '#8b3a62' },
   
-  // Fermentacion - fermentacion, embotellado
-  { id: '4', name: 'Lucia', avatar: '👩‍🔬', task: 'fermentacion', location: 'bodega', progress: 90, x: 30, y: 50, color: '#EC4899', skinColor: '#f5d6c6', hairColor: '#8b4513', shirtColor: '#f5f5dc' },
+  // Fermentacion - embotellado
   { id: '5', name: 'Santiago', avatar: '👨‍🍳', task: 'embotellado', location: 'bodega', progress: 55, x: 70, y: 60, color: '#6366F1', skinColor: '#d4a574', hairColor: '#4a3728', shirtColor: '#f5f5dc' },
-  
-  // Oficina - solo tareas administrativas y gestion
-  { id: '6', name: 'Diego', avatar: '👨‍💼', task: 'administracion', location: 'oficina', progress: 60, x: 35, y: 55, color: '#F59E0B', skinColor: '#e8c39e', hairColor: '#3d2914', shirtColor: '#8b2942' },
-  { id: '7', name: 'Elena', avatar: '👩‍💼', task: 'contabilidad', location: 'oficina', progress: 80, x: 65, y: 45, color: '#8B5CF6', skinColor: '#f5d6c6', hairColor: '#5c3d2e', shirtColor: '#2d5a27' },
   
   // Plaza - venta, cata, atención
   { id: '8', name: 'Rosita', avatar: '👩‍🍷', task: 'cata', location: 'plaza', progress: 40, x: 30, y: 45, color: '#3B82F6', skinColor: '#d4a574', hairColor: '#2c1810', shirtColor: '#4a6fa5' },
-  { id: '9', name: 'Fernando', avatar: '👨‍💼', task: 'venta', location: 'plaza', progress: 65, x: 50, y: 55, color: '#EC4899', skinColor: '#e8c39e', hairColor: '#8b4513', shirtColor: '#8b2942' },
   { id: '10', name: 'Pancho', avatar: '👨‍🌾', task: 'venta', location: 'plaza', progress: 35, x: 70, y: 50, color: '#10B981', skinColor: '#c9a86c', hairColor: '#3d2914', shirtColor: '#f5f5dc' },
   { id: '12', name: 'Marta', avatar: '👩‍🍳', task: 'atención', location: 'plaza', progress: 50, x: 40, y: 35, color: '#DC2626', skinColor: '#e8c39e', hairColor: '#8b4513', shirtColor: '#8b3a40' },
 ];
@@ -53,7 +46,7 @@ export const taskLabels: Record<string, { label: string; icon: string }> = {
 export const initialMessages: ChatMessage[] = [
   { id: 'welcome-msg-001', agentName: 'Sistema', message: 'Bienvenidos a Vendimia World!', timestamp: new Date('2024-03-01T10:00:00'), type: 'celebration' },
   { id: 'welcome-msg-002', agentName: 'Valentina', message: 'Cosecha Malbec al 75%', timestamp: new Date('2024-03-01T10:00:01'), type: 'task' },
-  { id: 'welcome-msg-003', agentName: 'Lucia', message: 'Fermentacion casi lista', timestamp: new Date('2024-03-01T10:00:02'), type: 'info' },
+  { id: 'welcome-msg-003', agentName: 'Santiago', message: 'Embotellado en progreso', timestamp: new Date('2024-03-01T10:00:02'), type: 'info' },
   { id: 'welcome-msg-004', agentName: 'Sistema', message: 'Agentes IA sincronizados', timestamp: new Date('2024-03-01T10:00:03'), type: 'info' },
 ];
 
@@ -69,16 +62,10 @@ export const celebrationMessages = [
 export const taskToScene: Record<string, string> = {
   // Vinedo - trabajo de campo
   cosecha: 'vinedo',
-  riego: 'vinedo',
   poda: 'vinedo',
   // Fermentacion - produccion de vino
-  fermentacion: 'fermentacion',
   embotellado: 'fermentacion',
-  // Oficina - solo tareas administrativas y gestion
-  administracion: 'oficina',
-  contabilidad: 'oficina',
-  marketing: 'oficina',
-  // Plaza - cata, venta, atención y espera
+  // Plaza - cata, venta, atención
   cata: 'plaza-central',
   venta: 'plaza-central',
   atención: 'plaza-central',
