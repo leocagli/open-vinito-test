@@ -8,10 +8,16 @@
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "hedera:setup": "node scripts/hedera/setup-operator.mjs",
+    "hedera:prove": "node scripts/hedera/prove-payment.mjs",
+    "deploy:evm": "node scripts/deploy/evm/deploy.mjs",
+    "interact:evm": "node scripts/deploy/evm/interact.mjs",
     "deploy:evm:guide": "node scripts/deploy/evm/guide.mjs",
     "deploy:soroban:guide": "node scripts/deploy/soroban/guide.mjs"
   },
   "dependencies": {
+    "@albedo-link/intent": "^0.13.0",
+    "@hashgraph/sdk": "^2.81.0",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "1.2.12",
     "@radix-ui/react-alert-dialog": "1.1.15",

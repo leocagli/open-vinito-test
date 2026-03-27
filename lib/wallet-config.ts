@@ -3,10 +3,11 @@ import { walletConnect } from 'wagmi/connectors'
 import { bscTestnet, bsc } from 'wagmi/chains'
 
 const walletConnectProjectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
+const isBrowser = typeof window !== 'undefined'
 
 const connectors: any[] = [injected()]
 
-if (walletConnectProjectId) {
+if (isBrowser && walletConnectProjectId) {
   connectors.push(
     walletConnect({
       projectId: walletConnectProjectId,
