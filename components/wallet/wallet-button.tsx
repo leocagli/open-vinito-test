@@ -29,7 +29,11 @@ interface WalletState {
   }
 }
 
-export function WalletButton() {
+interface WalletButtonProps {
+  docked?: boolean
+}
+
+export function WalletButton({ docked = false }: WalletButtonProps) {
   const [showDropdown, setShowDropdown] = useState(false)
   const [stellarManuallyDisconnected, setStellarManuallyDisconnected] = useState(false)
   const stellarManuallyDisconnectedRef = useRef(false)
@@ -197,19 +201,20 @@ export function WalletButton() {
     <div className="relative pointer-events-auto">
       <motion.button
         onClick={() => setShowDropdown(!showDropdown)}
-        className="px-3 py-2 flex items-center gap-2"
+        className={docked ? 'px-2 py-1.5 flex h-10 min-w-[7.5rem] items-center justify-center gap-1.5' : 'px-3 py-2 flex items-center gap-2'}
         style={{
-          backgroundColor: buttonBg,
+          backgroundColor: hasAnyConnection ? 'rgba(45, 90, 39, 0.8)' : 'rgba(74, 55, 40, 0.78)',
           border: `3px solid ${buttonBorder}`,
           boxShadow: '3px 3px 0 rgba(0,0,0,0.3)',
           fontFamily: 'var(--font-vt323)',
-          imageRendering: 'pixelated'
+          imageRendering: 'pixelated',
+          backdropFilter: 'blur(4px)'
         }}
         whileHover={{ y: -1 }}
         whileTap={{ y: 1 }}
       >
         <PixelWalletIcon connected={hasAnyConnection} />
-        <span className="text-xs font-bold text-white uppercase tracking-wide">
+        <span className={`${docked ? 'text-[10px]' : 'text-xs'} font-bold text-white uppercase tracking-wide`}>
           {hasAnyConnection 
             ? (walletState.bnb.address 
                 ? formatAddress(walletState.bnb.address)
