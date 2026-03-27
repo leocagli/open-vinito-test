@@ -7,9 +7,19 @@ interface TopBarProps {
   season: string;
   day: number;
   totalGrapes: number;
+  currentScene?: string;
+  onSceneChange?: (scene: string) => void;
 }
 
-export function TopBar({ season, day, totalGrapes }: TopBarProps) {
+const SCENES = ['plaza-central', 'vinedo', 'fermentacion', 'oficina'] as const;
+const SCENE_LABELS: Record<string, string> = {
+  'plaza-central': '🏛️ Plaza',
+  'vinedo': '🍇 Viñedo',
+  'fermentacion': '🛢️ Fermentación',
+  'oficina': '📋 Oficina'
+};
+
+export function TopBar({ season, day, totalGrapes, currentScene = 'plaza-central', onSceneChange }: TopBarProps) {
   return (
     <motion.div
       className="absolute top-0 left-0 z-10 pointer-events-none"
@@ -95,6 +105,28 @@ export function TopBar({ season, day, totalGrapes }: TopBarProps) {
           >
             {season}
           </span>
+        </div>
+
+        {/* Scene selector */}
+        <div className="flex gap-1 mt-1 flex-wrap">
+          {SCENES.map(scene => (
+            <motion.button
+              key={scene}
+              onClick={() => onSceneChange?.(scene)}
+              className="px-2 py-1 pointer-events-auto text-xs font-bold"
+              style={{
+                backgroundColor: currentScene === scene ? '#4a3728' : '#f5f0e1',
+                color: currentScene === scene ? '#f5f0e1' : '#4a3728',
+                border: '2px solid #4a3728',
+                boxShadow: '2px 2px 0 rgba(0,0,0,0.2)',
+                fontFamily: 'var(--font-vt323)'
+              }}
+              whileHover={{ y: -1 }}
+              whileTap={{ y: 1 }}
+            >
+              {SCENE_LABELS[scene]}
+            </motion.button>
+          ))}
         </div>
       </div>
     </motion.div>

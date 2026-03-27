@@ -262,7 +262,13 @@ export function VendimiaWorld() {
       <div className="flex h-full">
         {/* Game World */}
         <div className="flex-1 relative">
-          <TopBar season={getSeason()} day={day} totalGrapes={totalGrapes} />
+          <TopBar 
+            season={getSeason()} 
+            day={day} 
+            totalGrapes={totalGrapes} 
+            currentScene={currentScene}
+            onSceneChange={setCurrentScene}
+          />
           
           <GameWorld
             agents={agents}
