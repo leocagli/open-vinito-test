@@ -1,35 +1,31 @@
-# open-vinito-test
+# Open Vinito Test
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
+Bienvenido al repositorio **Open Vinito Test**. Este proyecto está diseñado como base de prueba para exploraciones y desarrollos relacionados con Open Source.
 
-## Built with v0
+## Instalación
 
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/leocagli/open-vinito-test.git
+   ```
+2. Accede al directorio del proyecto:
+   ```bash
+   cd open-vinito-test
+   ```
 
-[Continue working on v0 →](https://v0.app/chat/projects/prj_TMnSELQ76UJia8odjhtQTylpgHST)
+## Uso
 
-## Getting Started
+Sigue las instrucciones específicas de tu caso de uso para adaptar este proyecto a tus necesidades. (Sección pendiente de detalles adicionales sobre el uso del repositorio).
 
-First, run the development server:
+## Contribuir
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+¡Nos encantaría que contribuyas! Por favor, sigue los pasos a continuación:
+- Haz un fork del proyecto.
+- Crea tu feature branch (`git checkout -b feature/NuevaFuncionalidad`).
+- Realiza un commit de tus cambios (`git commit -m 'Añadir nueva funcionalidad'`).
+- Haz push a tu branch (`git push origin feature/NuevaFuncionalidad`).
+- Abre un Pull Request.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Licencia
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-## Learn More
-
-To learn more, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
-
-<a href="https://v0.app/chat/api/kiro/clone/leocagli/open-vinito-test" alt="Open in Kiro"><img src="https://pdgvvgmkdvyeydso.public.blob.vercel-storage.com/open%20in%20kiro.svg?sanitize=true" /></a>
+Este proyecto está licenciado bajo la Licencia MIT. Para más detalles, consulta el archivo [LICENSE](LICENSE).
