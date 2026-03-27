@@ -27,25 +27,32 @@ function TaskIconSmall({ task }: { task: string }) {
 }
 
 export function AgentsSidebar({ agents, selectedAgent, onAgentSelect }: AgentsSidebarProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (mobile) {
+        setIsOpen(false);
+      }
+    };
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const showSidebar = isOpen || !isMobile;
+  const showSidebar = isOpen;
 
   return (
     <>
-      {/* Toggle Button for mobile */}
+      {/* Toggle button */}
       <motion.button
-        className="absolute top-4 right-4 z-30 md:hidden"
+        className={`absolute top-4 z-[6] ${showSidebar ? 'right-52 md:right-52' : 'right-4'}`}
         onClick={() => setIsOpen(!isOpen)}
         whileTap={{ scale: 0.95 }}
+        whileHover={{ y: -1 }}
         style={{
           backgroundColor: '#3d3530',
           border: '2px solid #4a3728',
@@ -60,7 +67,7 @@ export function AgentsSidebar({ agents, selectedAgent, onAgentSelect }: AgentsSi
             fontSize: '14px'
           }}
         >
-          Avatar
+          {showSidebar ? 'Ocultar Avatar' : 'Mostrar Avatar'}
         </span>
       </motion.button>
 
@@ -68,8 +75,8 @@ export function AgentsSidebar({ agents, selectedAgent, onAgentSelect }: AgentsSi
       <AnimatePresence>
         {showSidebar && (
           <motion.div
-            className="absolute top-4 right-4 z-20 md:top-4 md:right-4"
-            initial={{ x: isMobile ? 100 : 0, opacity: isMobile ? 0 : 1 }}
+            className="absolute top-4 right-4 z-[5] md:top-4 md:right-4"
+            initial={{ x: 100, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 100, opacity: 0 }}
             transition={{ type: 'spring', damping: 25 }}
@@ -102,7 +109,7 @@ export function AgentsSidebar({ agents, selectedAgent, onAgentSelect }: AgentsSi
                 </span>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="md:hidden hover:opacity-80"
+                  className="hover:opacity-80"
                   style={{ color: '#f5f0e1' }}
                 >
                   x
@@ -205,7 +212,7 @@ export function AgentsSidebar({ agents, selectedAgent, onAgentSelect }: AgentsSi
       {/* Mobile overlay */}
       {isOpen && isMobile && (
         <motion.div
-          className="fixed inset-0 z-10"
+          className="fixed inset-0 z-[4]"
           style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

@@ -171,7 +171,7 @@ export function VendimiaWorld() {
       <AnimatePresence>
         {showWelcome && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-[120] flex items-center justify-center p-4"
             style={{ backgroundColor: 'rgba(35, 30, 25, 0.9)' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
