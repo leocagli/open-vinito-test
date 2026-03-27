@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import { GrapeIcon } from './sprites';
-import { WalletButton } from '@/components/wallet/wallet-button';
 
 interface TopBarProps {
   season: string;
@@ -133,18 +132,6 @@ export function TopBar({ season, day, totalGrapes, currentScene = 'plaza-central
         </div>
       </div>
     </motion.div>
-
-      {/* Right side - Wallet */}
-      <motion.div
-        className="fixed top-16 right-4 md:top-4 md:right-56 z-40 pointer-events-none"
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.3 }}
-      >
-        <div className="p-2 md:p-3">
-          <WalletButton />
-        </div>
-      </motion.div>
     </>
   );
 }

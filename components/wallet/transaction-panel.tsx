@@ -18,7 +18,11 @@ interface TransactionLog {
   timestamp: number;
 }
 
-export function TransactionPanel() {
+interface TransactionPanelProps {
+  docked?: boolean;
+}
+
+export function TransactionPanel({ docked = false }: TransactionPanelProps) {
   const { address, isConnected } = useAccount();
   const bnbChainId = useChainId();
   const bnbPublicClient = usePublicClient({ chainId: bscTestnet.id });
@@ -472,23 +476,24 @@ export function TransactionPanel() {
   };
 
   return (
-    <>
+    <div className={docked ? 'relative pointer-events-auto' : undefined}>
       {/* Toggle button - pixel style */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-28 right-4 md:top-4 md:right-[22rem] z-50 px-3 py-2 flex items-center gap-2"
+        className={docked ? 'px-2 py-1.5 flex h-10 min-w-[7.5rem] items-center justify-center gap-1.5' : 'fixed top-40 left-4 md:top-[8.75rem] md:left-[10.5rem] z-50 px-3 py-2 flex items-center gap-2'}
         style={{
-          backgroundColor: '#4a3728',
+          backgroundColor: 'rgba(74, 55, 40, 0.78)',
           border: '3px solid #2d221a',
           boxShadow: '3px 3px 0 rgba(0,0,0,0.3)',
           fontFamily: 'var(--font-vt323)',
-          imageRendering: 'pixelated'
+          imageRendering: 'pixelated',
+          backdropFilter: 'blur(4px)'
         }}
         whileHover={{ y: -1 }}
         whileTap={{ y: 1 }}
       >
         <PixelCoinIcon />
-        <span className="text-xs font-bold text-white uppercase">
+        <span className={`${docked ? 'text-[10px]' : 'text-xs'} font-bold text-white uppercase`}>
           {isOpen ? 'Cerrar' : 'Transacciones'}
         </span>
       </motion.button>
@@ -501,7 +506,7 @@ export function TransactionPanel() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -20, opacity: 0 }}
             transition={{ type: 'spring', damping: 25 }}
-            className="fixed top-40 right-4 md:top-20 md:right-[22rem] z-40 w-[calc(100vw-2rem)] max-w-72"
+            className={docked ? 'absolute left-0 top-[calc(100%+0.75rem)] z-[110] w-[min(22rem,calc(100vw-2rem))]' : 'fixed top-52 left-4 md:top-[11.75rem] md:left-[10.5rem] z-40 w-[calc(100vw-2rem)] max-w-72'}
             style={{
               backgroundColor: '#f5e6d3',
               border: '4px solid #4a3728',
@@ -978,7 +983,7 @@ export function TransactionPanel() {
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 }
 
