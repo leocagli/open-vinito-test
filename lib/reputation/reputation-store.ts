@@ -9,12 +9,12 @@ export interface ReputationSnapshot {
 type ReputationDb = Map<string, ReputationSnapshot>
 
 const globalDb = globalThis as typeof globalThis & {
-  __openStellarReputationDb__?: ReputationDb
+  __openVinitoReputationDb__?: ReputationDb
 }
 
-const db: ReputationDb = globalDb.__openStellarReputationDb__ ?? new Map()
-if (!globalDb.__openStellarReputationDb__) {
-  globalDb.__openStellarReputationDb__ = db
+const db: ReputationDb = globalDb.__openVinitoReputationDb__ ?? new Map()
+if (!globalDb.__openVinitoReputationDb__) {
+  globalDb.__openVinitoReputationDb__ = db
 }
 
 export function getReputation(actorId: string): ReputationSnapshot {
