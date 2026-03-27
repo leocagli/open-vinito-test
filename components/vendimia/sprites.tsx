@@ -459,6 +459,30 @@ export function TaskLabel({
   }
 
   const config = taskConfig[task];
+  if (!config || !config.icon) {
+    return (
+      <div 
+        className="flex items-center gap-2 px-3 py-1.5"
+        style={{
+          backgroundColor: '#f5f0e1',
+          border: '2px solid #4a3728',
+          borderRadius: '4px',
+          boxShadow: '2px 2px 0 rgba(0,0,0,0.2)'
+        }}
+      >
+        <GrapeIcon size={18} />
+        <div className="flex flex-col gap-0.5">
+          <span 
+            className="text-xs font-bold"
+            style={{ color: '#4a3728', fontFamily: 'var(--font-vt323)', letterSpacing: '1px' }}
+          >
+            {task || 'Tarea'}
+          </span>
+          <ProgressBar progress={progress} color="#9e9e9e" width={50} height={6} />
+        </div>
+      </div>
+    );
+  }
   const Icon = config.icon;
   
   return (

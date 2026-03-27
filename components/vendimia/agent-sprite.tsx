@@ -55,6 +55,13 @@ const NPC007_SPRITES = {
   right: '/sprites/npc007-right.png',
 };
 
+const NPC008_SPRITES = {
+  front: '/sprites/npc008-front.png',
+  back: '/sprites/npc008-back.png',
+  left: '/sprites/npc008-left.png',
+  right: '/sprites/npc008-right.png',
+};
+
 export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
   const [walkFrame, setWalkFrame] = useState(0);
   const [direction, setDirection] = useState<'front' | 'back' | 'left' | 'right'>('front');
@@ -81,7 +88,7 @@ export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
 
   // Cambiar direccion aleatoriamente para agentes con sprites de imagen
   useEffect(() => {
-    if (agent.id === '1' || agent.id === '3' || agent.id === '5' || agent.id === '8' || agent.id === '9' || agent.id === '11') {
+    if (agent.id === '1' || agent.id === '3' || agent.id === '5' || agent.id === '8' || agent.id === '9' || agent.id === '10' || agent.id === '11') {
       const dirInterval = setInterval(() => {
         const dirs: Array<'front' | 'back' | 'left' | 'right'> = ['front', 'back', 'left', 'right'];
         setDirection(dirs[Math.floor(Math.random() * dirs.length)]);
@@ -186,6 +193,22 @@ export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
     );
   }
 
+  // Sprite de imagen para NPC008/Pancho vendedor ambulante (id: 10)
+  function getNPC008Sprite() {
+    return (
+      <div className="relative w-11 h-14" style={{ imageRendering: 'pixelated' }}>
+        <Image
+          src={NPC008_SPRITES[direction]}
+          alt="Pancho"
+          fill
+          className="object-contain"
+          style={{ imageRendering: 'pixelated' }}
+          priority
+        />
+      </div>
+    );
+  }
+
   // Select sprite based on task (para otros agentes)
   function getWorkerSprite() {
     // Si es Valentina, usar el sprite de imagen
@@ -211,6 +234,11 @@ export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
     // Si es Fernando (vendedor), usar el sprite del vendedor
     if (agent.id === '9') {
       return getVendedorSprite();
+    }
+
+    // Si es Pancho (NPC008 vendedor ambulante), usar el sprite del ambulante
+    if (agent.id === '10') {
+      return getNPC008Sprite();
     }
 
     // Si es Tomas (NPC005), usar el sprite del trabajador de viñedo
