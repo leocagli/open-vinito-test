@@ -9,6 +9,9 @@ export const initialAgents: Agent[] = [
   // Fermentacion - embotellado
   { id: '5', name: 'Santiago', avatar: '👨‍🍳', task: 'embotellado', location: 'bodega', progress: 55, x: 70, y: 60, color: '#6366F1', skinColor: '#d4a574', hairColor: '#4a3728', shirtColor: '#f5f5dc' },
   
+  // Oficina - administracion
+  { id: '13', name: 'Elena', avatar: '👩‍💼', task: 'administracion', location: 'oficina', progress: 70, x: 50, y: 50, color: '#059669', skinColor: '#e8c39e', hairColor: '#8b4513', shirtColor: '#2d5a27' },
+  
   // Plaza - venta, cata, atención
   { id: '8', name: 'Rosita', avatar: '👩‍🍷', task: 'cata', location: 'plaza', progress: 40, x: 30, y: 45, color: '#3B82F6', skinColor: '#d4a574', hairColor: '#2c1810', shirtColor: '#4a6fa5' },
   { id: '10', name: 'Pancho', avatar: '👨‍🌾', task: 'venta', location: 'plaza', progress: 35, x: 70, y: 50, color: '#10B981', skinColor: '#c9a86c', hairColor: '#3d2914', shirtColor: '#f5f5dc' },
@@ -65,6 +68,8 @@ export const taskToScene: Record<string, string> = {
   poda: 'vinedo',
   // Fermentacion - produccion de vino
   embotellado: 'fermentacion',
+  // Oficina - administracion
+  administracion: 'oficina',
   // Plaza - cata, venta, atención
   cata: 'plaza-central',
   venta: 'plaza-central',

@@ -409,25 +409,26 @@ export function ProgressBar({
 }
 
 // Task label bubble
-// Task Label - Muestra etiqueta de tarea con ícono y barra de progreso
-export function TaskLabel({ task, progress }: { task?: string; progress: number }) {
-  // Mapeo seguro de tareas a iconos
-  const getTaskConfig = (t?: string) => {
-    const config: Record<string, { icon: React.FC<{ size?: number }>; label: string; color: string }> = {
-      cosecha: { icon: GrapeIcon, label: 'Cosecha', color: '#4caf50' },
-      poda: { icon: PruningIcon, label: 'Poda', color: '#4caf50' },
-      embotellado: { icon: BottleIcon, label: 'Embotellado', color: '#ff9800' },
-      cata: { icon: WineGlassIcon, label: 'Cata', color: '#9c27b0' },
-      atención: { icon: GrapeIcon, label: 'Atención', color: '#dc2626' },
-      venta: { icon: GrapeIcon, label: 'Venta', color: '#e91e63' },
-      espera: { icon: GrapeIcon, label: 'Espera', color: '#9e9e9e' },
-      descanso: { icon: GrapeIcon, label: 'Descanso', color: '#9e9e9e' },
-    };
-    return config[t ?? ''] ?? { icon: GrapeIcon, label: t ?? 'Tarea', color: '#9e9e9e' };
-  };
+// Configuracion de tareas - definido fuera del componente para evitar recreacion
+const TASK_CONFIG: Record<string, { icon: React.FC<{ size?: number }>; label: string; color: string }> = {
+  cosecha: { icon: GrapeIcon, label: 'Cosecha', color: '#4caf50' },
+  poda: { icon: PruningIcon, label: 'Poda', color: '#4caf50' },
+  embotellado: { icon: BottleIcon, label: 'Embotellado', color: '#ff9800' },
+  cata: { icon: WineGlassIcon, label: 'Cata', color: '#9c27b0' },
+  administracion: { icon: BottleIcon, label: 'Admin', color: '#059669' },
+  atención: { icon: GrapeIcon, label: 'Atención', color: '#dc2626' },
+  venta: { icon: GrapeIcon, label: 'Venta', color: '#e91e63' },
+  espera: { icon: GrapeIcon, label: 'Espera', color: '#9e9e9e' },
+  descanso: { icon: GrapeIcon, label: 'Descanso', color: '#9e9e9e' },
+};
 
-  const taskInfo = getTaskConfig(task);
-  const Icon = taskInfo.icon;
+const DEFAULT_TASK_CONFIG = { icon: GrapeIcon, label: 'Tarea', color: '#9e9e9e' };
+
+// Task Label - Muestra etiqueta de tarea con icono y barra de progreso
+export function TaskLabel({ task, progress }: { task?: string; progress: number }) {
+  const taskKey = task ?? '';
+  const cfg = TASK_CONFIG[taskKey] ?? { ...DEFAULT_TASK_CONFIG, label: taskKey || 'Tarea' };
+  const IconComponent = cfg.icon;
 
   return (
     <div 
@@ -439,15 +440,15 @@ export function TaskLabel({ task, progress }: { task?: string; progress: number 
         boxShadow: '2px 2px 0 rgba(0,0,0,0.2)'
       }}
     >
-      <Icon size={18} />
+      <IconComponent size={18} />
       <div className="flex flex-col gap-0.5">
         <span 
           className="text-xs font-bold"
           style={{ color: '#4a3728', fontFamily: 'var(--font-vt323)', letterSpacing: '1px' }}
         >
-          {taskInfo.label}
+          {cfg.label}
         </span>
-        <ProgressBar progress={progress} color={taskInfo.color} width={50} height={6} />
+        <ProgressBar progress={progress} color={cfg.color} width={50} height={6} />
       </div>
     </div>
   );

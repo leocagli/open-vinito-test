@@ -69,6 +69,13 @@ const NPC009_SPRITES = {
   right: '/sprites/npc009-right.png',
 };
 
+const NPC010_SPRITES = {
+  front: '/sprites/npc010-front.png',
+  back: '/sprites/npc010-back.png',
+  left: '/sprites/npc010-left.png',
+  right: '/sprites/npc010-right.png',
+};
+
 export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
   const [walkFrame, setWalkFrame] = useState(0);
   const [direction, setDirection] = useState<'front' | 'back' | 'left' | 'right'>('front');
@@ -95,7 +102,7 @@ export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
 
   // Cambiar direccion aleatoriamente para agentes con sprites de imagen
   useEffect(() => {
-    if (agent.id === '1' || agent.id === '3' || agent.id === '5' || agent.id === '8' || agent.id === '9' || agent.id === '10' || agent.id === '11' || agent.id === '12') {
+    if (agent.id === '1' || agent.id === '3' || agent.id === '5' || agent.id === '8' || agent.id === '10' || agent.id === '11' || agent.id === '12' || agent.id === '13') {
       const dirInterval = setInterval(() => {
         const dirs: Array<'front' | 'back' | 'left' | 'right'> = ['front', 'back', 'left', 'right'];
         setDirection(dirs[Math.floor(Math.random() * dirs.length)]);
@@ -232,6 +239,22 @@ export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
     );
   }
 
+  // Sprite de imagen para NPC010/Elena administrativa oficina (id: 13)
+  function getNPC010Sprite() {
+    return (
+      <div className="relative w-11 h-14" style={{ imageRendering: 'pixelated' }}>
+        <Image
+          src={NPC010_SPRITES[direction]}
+          alt="Elena"
+          fill
+          className="object-contain"
+          style={{ imageRendering: 'pixelated' }}
+          priority
+        />
+      </div>
+    );
+  }
+
   // Select sprite based on task (para otros agentes)
   function getWorkerSprite() {
     // Si es Valentina, usar el sprite de imagen
@@ -272,6 +295,11 @@ export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
     // Si es Tomas (NPC005), usar el sprite del trabajador de viñedo
     if (agent.id === '11') {
       return getNPC005Sprite();
+    }
+
+    // Si es Elena (NPC010 administrativa oficina), usar el sprite de oficina
+    if (agent.id === '13') {
+      return getNPC010Sprite();
     }
 
     const commonProps = {
