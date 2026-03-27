@@ -37,22 +37,34 @@ const VENDEDOR_SPRITES = {
 export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
   const [walkFrame, setWalkFrame] = useState(0);
   const [direction, setDirection] = useState<'front' | 'back' | 'left' | 'right'>('front');
+  const [offsetX, setOffsetX] = useState(0);
+  const [offsetY, setOffsetY] = useState(0);
 
-  // Animate walking frames
+  // Animate walking frames mas fluido
   useEffect(() => {
     const interval = setInterval(() => {
       setWalkFrame(prev => (prev + 1) % 2);
-    }, 500);
+    }, 400);
     return () => clearInterval(interval);
   }, []);
 
-  // Cambiar direccion aleatoriamente para Valentina, Camila y Fernando (vendedor)
+  // Movimiento fluido aleatorio para todos los agentes
+  useEffect(() => {
+    const moveInterval = setInterval(() => {
+      // Movimiento sutil aleatorio entre -2 y 2 pixeles
+      setOffsetX(Math.random() * 4 - 2);
+      setOffsetY(Math.random() * 2 - 1);
+    }, 2000);
+    return () => clearInterval(moveInterval);
+  }, []);
+
+  // Cambiar direccion aleatoriamente para agentes con sprites de imagen
   useEffect(() => {
     if (agent.id === '1' || agent.id === '3' || agent.id === '9') {
       const dirInterval = setInterval(() => {
         const dirs: Array<'front' | 'back' | 'left' | 'right'> = ['front', 'back', 'left', 'right'];
         setDirection(dirs[Math.floor(Math.random() * dirs.length)]);
-      }, 3000);
+      }, 2500);
       return () => clearInterval(dirInterval);
     }
   }, [agent.id]);
@@ -152,20 +164,23 @@ export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
       style={{ 
         left: `${agent.x}%`, 
         top: `${agent.y}%`,
-        transform: 'translate(-50%, -50%)',
         zIndex: isSelected ? 20 : 10
       }}
-      initial={{ scale: 0, opacity: 0 }}
+      initial={{ scale: 0, opacity: 0, x: '-50%', y: '-50%' }}
       animate={{ 
         scale: 1, 
         opacity: 1,
-        y: [0, -3, 0]
+        x: `calc(-50% + ${offsetX}px)`,
+        y: `calc(-50% + ${offsetY}px)`,
       }}
       transition={{
-        scale: { duration: 0.3 },
-        y: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+        scale: { duration: 0.4, ease: "backOut" },
+        opacity: { duration: 0.3 },
+        x: { duration: 1.5, ease: "easeInOut" },
+        y: { duration: 1.5, ease: "easeInOut" },
       }}
-      whileHover={{ scale: 1.05 }}
+      whileHover={{ scale: 1.08, transition: { duration: 0.2 } }}
+      whileTap={{ scale: 0.95 }}
       onClick={onClick}
     >
       {/* Task Label - Using pixel art SVG icons */}
@@ -191,9 +206,16 @@ export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
       <motion.div 
         className="relative"
         animate={isSelected ? {
-          filter: ['drop-shadow(0 0 4px #ffd700)', 'drop-shadow(0 0 8px #ffd700)', 'drop-shadow(0 0 4px #ffd700)']
-        } : {}}
-        transition={{ duration: 1, repeat: Infinity }}
+          filter: ['drop-shadow(0 0 4px #ffd700)', 'drop-shadow(0 0 8px #ffd700)', 'drop-shadow(0 0 4px #ffd700)'],
+          y: [0, -2, 0],
+        } : {
+          y: [0, -1.5, 0],
+        }}
+        transition={{ 
+          duration: 1.2, 
+          repeat: Infinity, 
+          ease: "easeInOut" 
+        }}
       >
         {getWorkerSprite()}
         
