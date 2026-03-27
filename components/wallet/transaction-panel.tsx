@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAccount, useChainId, useConnect, usePublicClient, useSendTransaction, useSwitchChain } from 'wagmi';
 import { bscTestnet } from 'wagmi/chains';
 import { connectFreighter, getFreighterNetwork, getFreighterPublicKey, isFreighterInstalled, sendStellarPayment } from '@/lib/stellar-utils';
+import { clearWalletConnectSessionStorage, isWalletConnectResetError } from '@/lib/walletconnect-utils';
 import { isAddress, parseEther } from 'viem';
 
 interface TransactionLog {
@@ -21,7 +22,7 @@ export function TransactionPanel() {
   const bnbChainId = useChainId();
   const bnbPublicClient = usePublicClient({ chainId: bscTestnet.id });
   const { sendTransactionAsync, isPending: isSendingBnb } = useSendTransaction();
-  const { connect, connectors, isPending: isConnectingBnb } = useConnect();
+  const { connectAsync, connectors, isPending: isConnectingBnb } = useConnect();
   const { switchChainAsync, isPending: isSwitchingChain } = useSwitchChain();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'bnb' | 'stellar'>('bnb');
@@ -61,8 +62,11 @@ export function TransactionPanel() {
         return;
       }
 
-      connect({ connector });
+      await connectAsync({ connector });
     } catch (error) {
+      if (kind === 'walletconnect' && isWalletConnectResetError(error)) {
+        clearWalletConnectSessionStorage();
+      }
       const message = error instanceof Error ? error.message : 'No se pudo conectar MetaMask';
       addLog({
         type: 'bnb',
@@ -250,7 +254,7 @@ export function TransactionPanel() {
       {/* Toggle button - pixel style */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-16 right-4 z-50 px-3 py-2 flex items-center gap-2"
+        className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 px-3 py-2 flex items-center gap-2"
         style={{
           backgroundColor: '#4a3728',
           border: '3px solid #2d221a',
@@ -275,7 +279,7 @@ export function TransactionPanel() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 300, opacity: 0 }}
             transition={{ type: 'spring', damping: 25 }}
-            className="fixed top-28 right-4 z-40 w-72"
+            className="fixed bottom-20 right-4 md:bottom-24 md:right-6 z-40 w-[calc(100vw-2rem)] max-w-72"
             style={{
               backgroundColor: '#f5e6d3',
               border: '4px solid #4a3728',

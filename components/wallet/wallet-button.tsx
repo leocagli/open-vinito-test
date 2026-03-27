@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAccount, useChainId, useConnect, useDisconnect, useSwitchChain } from 'wagmi'
 import { bscTestnet } from 'wagmi/chains'
+import { clearWalletConnectSessionStorage, isWalletConnectResetError } from '@/lib/walletconnect-utils'
 import { 
   connectFreighter, 
   getFreighterPublicKey, 
@@ -45,7 +46,7 @@ export function WalletButton() {
   const { disconnect: disconnectBnb } = useDisconnect()
   const { switchChainAsync, isPending: isSwitchingBnb } = useSwitchChain()
   
-  const { connect, connectors, isPending: isConnectingBnb } = useConnect()
+  const { connectAsync, connectors, isPending: isConnectingBnb } = useConnect()
 
   const syncFreighterState = useCallback(async () => {
     const installed = await isFreighterInstalled()
@@ -113,15 +114,18 @@ export function WalletButton() {
 
     setIsConnecting('bnb')
     try {
-      await connect({ connector })
+      await connectAsync({ connector })
     } catch (err) {
+      if (kind === 'walletconnect' && isWalletConnectResetError(err)) {
+        clearWalletConnectSessionStorage()
+      }
       const safeErr = err instanceof Error ? err.message.replace(/[\r\n]/g, ' ') : 'Unknown error'
       console.error('[v0] Error connecting BNB wallet:', safeErr)
     } finally {
       setIsConnecting(null)
       setShowDropdown(false)
     }
-  }, [connect, metaMaskConnector, walletConnectConnector])
+  }, [connectAsync, metaMaskConnector, walletConnectConnector])
 
   // Connect to Stellar via Freighter
   const handleConnectStellar = useCallback(async () => {
