@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
 import type { Agent } from '@/lib/vendimia-types';
 import { AgentSprite } from './agent-sprite';
 
@@ -15,23 +16,83 @@ interface GameWorldProps {
 // Scene backgrounds
 const sceneBackgrounds: Record<string, string> = {
   'plaza-central': '/scenes/plaza-central.jpg',
+  'vinedo': '/scenes/vinedo.jpg',
+  'fermentacion': '/scenes/fermentacion.jpg',
+  'oficina': '/scenes/oficina.jpg',
+};
+
+// Scene labels in Spanish
+const sceneLabels: Record<string, string> = {
+  'plaza-central': 'Plaza Central',
+  'vinedo': 'Viñedo',
+  'fermentacion': 'Sala de Fermentación',
+  'oficina': 'Oficina',
 };
 
 export function GameWorld({ agents, selectedAgent, onAgentClick, currentScene = 'plaza-central' }: GameWorldProps) {
   const backgroundImage = sceneBackgrounds[currentScene];
+  const sceneLabel = sceneLabels[currentScene] || 'Vendimia World';
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  // Track mouse position para parallax effect
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  // Parallax offset basado en mouse position (subtle)
+  const parallaxX = (mousePos.x - window.innerWidth / 2) * 0.02;
+  const parallaxY = (mousePos.y - window.innerHeight / 2) * 0.02;
 
   return (
     <div className="relative w-full h-full overflow-hidden">
-      {/* Scene Background Image */}
-      {backgroundImage ? (
-        <Image
-          src={backgroundImage}
-          alt={`Escena: ${currentScene}`}
-          fill
-          className="object-cover"
-          style={{ imageRendering: 'pixelated' }}
-          priority
+      {/* Fondo base con gradiente atmosphere */}
+      <div 
+        className="absolute inset-0"
+        style={{
+          background: currentScene === 'plaza-central' 
+            ? 'linear-gradient(180deg, #87ceeb 0%, #e0f4ff 50%, #d4a574 100%)'
+            : currentScene === 'vinedo'
+            ? 'linear-gradient(180deg, #87ceeb 0%, #d4a574 100%)'
+            : currentScene === 'bodega' || currentScene === 'fermentacion'
+            ? 'linear-gradient(180deg, #4a3728 0%, #8b7355 100%)'
+            : 'linear-gradient(180deg, #8b8b8b 0%, #c9b896 100%)',
+        }}
+      />
+
+      {/* Parallax Background Layer - Far */}
+      {currentScene === 'plaza-central' && (
+        <motion.div 
+          className="absolute inset-0 opacity-30"
+          style={{
+            backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(255,255,255,0.1) 80px, rgba(255,255,255,0.1) 81px)',
+            backgroundSize: '200px 100%',
+            x: parallaxX * 0.5,
+            y: parallaxY * 0.5,
+          }}
         />
+      )}
+
+      {/* Scene Background Image con parallax */}
+      {backgroundImage ? (
+        <motion.div
+          className="absolute inset-0"
+          style={{
+            x: parallaxX * 0.8,
+            y: parallaxY * 0.8,
+          }}
+        >
+          <Image
+            src={backgroundImage}
+            alt={`Escena: ${currentScene}`}
+            fill
+            className="object-cover"
+            priority
+          />
+        </motion.div>
       ) : (
         <div 
           className="absolute inset-0"
@@ -39,50 +100,33 @@ export function GameWorld({ agents, selectedAgent, onAgentClick, currentScene = 
         />
       )}
 
-      {/* Agents - positioned on top of the scene */}
-      {agents.map((agent) => (
-        <AgentSprite
-          key={agent.id}
-          agent={agent}
-          isSelected={selectedAgent?.id === agent.id}
-          onClick={() => onAgentClick(agent)}
-        />
-      ))}
+      {/* Agents - positioned on top of the scene con depth sorting */}
+      <div className="absolute inset-0 pointer-events-none">
+        {agents
+          .sort((a, b) => a.y - b.y) // Depth sort: más arriba primero, más abajo último
+          .map((agent) => (
+            <div key={agent.id} className="pointer-events-auto">
+              <AgentSprite
+                agent={agent}
+                isSelected={selectedAgent?.id === agent.id}
+                onClick={() => onAgentClick(agent)}
+              />
+            </div>
+          ))}
+      </div>
 
-      {/* Welcome Banner */}
+      {/* Fog/Atmosphere effect - profundidad visual */}
       <motion.div 
-        className="absolute top-2 right-16 md:top-4 md:right-56 z-10"
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.3, type: 'spring' }}
-      >
-        <div 
-          className="relative px-3 py-2 transform rotate-2"
-          style={{
-            backgroundColor: '#f5f0e1',
-            border: '3px solid #4a3728',
-            boxShadow: '4px 4px 0 rgba(0,0,0,0.2)'
-          }}
-        >
-          <span 
-            className="text-xs md:text-sm font-bold"
-            style={{ 
-              fontFamily: 'var(--font-vt323)',
-              color: '#8b2942',
-              letterSpacing: '1px'
-            }}
-          >
-            BIENVENIDOS A MENDOZA
-          </span>
-          {/* Decorative flags */}
-          <div className="absolute -top-3 -left-1 w-2 h-3" style={{ backgroundColor: '#8b2942' }} />
-          <div className="absolute -top-3 -right-1 w-2 h-3" style={{ backgroundColor: '#8b2942' }} />
-        </div>
-      </motion.div>
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.1) 100%)',
+          mixBlendMode: 'multiply',
+        }}
+      />
 
       {/* Scene Label */}
       <motion.div 
-        className="absolute bottom-4 left-4 z-10"
+        className="absolute bottom-4 left-4 z-30"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.5 }}
@@ -102,7 +146,7 @@ export function GameWorld({ agents, selectedAgent, onAgentClick, currentScene = 
               color: '#f5f0e1'
             }}
           >
-            Plaza Central
+            {sceneLabel}
           </span>
         </div>
       </motion.div>

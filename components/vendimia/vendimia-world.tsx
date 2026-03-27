@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Agent, ChatMessage } from '@/lib/vendimia-types';
-import { initialAgents, initialMessages, celebrationMessages, taskLabels } from '@/lib/vendimia-data';
+import { initialAgents, initialMessages, celebrationMessages, taskLabels, getAgentsForScene } from '@/lib/vendimia-data';
 import { GameWorld } from './game-world';
 import { ChatPanel } from './chat-panel';
 import { AgentsSidebar } from './agents-sidebar';
@@ -25,6 +25,7 @@ export function VendimiaWorld() {
   const [day, setDay] = useState(1);
   const [totalGrapes, setTotalGrapes] = useState(12450);
   const [showWelcome, setShowWelcome] = useState(true);
+  const [currentScene, setCurrentScene] = useState('plaza-central');
 
   // Use a stable ref for addMessage to avoid dependency issues
   const addMessageRef = useRef<(msg: Omit<ChatMessage, 'id' | 'timestamp'>) => void>(() => {});
@@ -261,12 +262,19 @@ export function VendimiaWorld() {
       <div className="flex h-full">
         {/* Game World */}
         <div className="flex-1 relative">
-          <TopBar season={getSeason()} day={day} totalGrapes={totalGrapes} />
+          <TopBar 
+            season={getSeason()} 
+            day={day} 
+            totalGrapes={totalGrapes} 
+            currentScene={currentScene}
+            onSceneChange={setCurrentScene}
+          />
           
           <GameWorld
-            agents={agents}
+            agents={getAgentsForScene(agents, currentScene)}
             selectedAgent={selectedAgent}
             onAgentClick={handleAgentClick}
+            currentScene={currentScene}
           />
 
           <ChatPanel
