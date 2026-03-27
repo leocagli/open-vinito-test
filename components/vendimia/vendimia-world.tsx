@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Agent, ChatMessage } from '@/lib/vendimia-types';
-import { initialAgents, initialMessages, celebrationMessages, taskLabels } from '@/lib/vendimia-data';
+import { initialAgents, initialMessages, celebrationMessages, taskLabels, getAgentsForScene } from '@/lib/vendimia-data';
 import { GameWorld } from './game-world';
 import { ChatPanel } from './chat-panel';
 import { AgentsSidebar } from './agents-sidebar';
@@ -271,7 +271,7 @@ export function VendimiaWorld() {
           />
           
           <GameWorld
-            agents={agents}
+            agents={getAgentsForScene(agents, currentScene)}
             selectedAgent={selectedAgent}
             onAgentClick={handleAgentClick}
             currentScene={currentScene}

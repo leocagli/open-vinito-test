@@ -41,3 +41,19 @@ export const celebrationMessages = [
   '¡Malbec de primera!',
   '¡Mendoza orgullosa!',
 ];
+
+// Mapeo de tareas a escenas - cada tarea pertenece a una escena especifica
+export const taskToScene: Record<string, string> = {
+  cosecha: 'vinedo',
+  riego: 'vinedo',
+  poda: 'vinedo',
+  fermentacion: 'fermentacion',
+  embotellado: 'fermentacion',
+  cata: 'oficina',
+  descanso: 'plaza-central',
+};
+
+// Funcion helper para obtener agentes de una escena
+export function getAgentsForScene(agents: Agent[], scene: string): Agent[] {
+  return agents.filter(agent => taskToScene[agent.task] === scene);
+}
