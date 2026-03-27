@@ -351,8 +351,8 @@ export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-
   
   // Ajustar escala según la escena
   if (currentScene === 'plaza-central') {
-    baseScale = 0.7;  // Más pequeños en la plaza
-    maxScale = 1.0;
+    baseScale = 0.5;  // Más pequeños en la plaza
+    maxScale = 0.75;
   } else if (currentScene === 'vinedo' || currentScene === 'fermentacion' || currentScene === 'oficina') {
     baseScale = 1.0;  // Más grandes en otros mapas
     maxScale = 1.4;
