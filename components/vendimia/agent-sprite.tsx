@@ -46,9 +46,9 @@ export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
     return () => clearInterval(interval);
   }, []);
 
-  // Cambiar direccion aleatoriamente para Valentina y Camila
+  // Cambiar direccion aleatoriamente para Valentina, Camila y Fernando (vendedor)
   useEffect(() => {
-    if (agent.id === '1' || agent.id === '3') {
+    if (agent.id === '1' || agent.id === '3' || agent.id === '9') {
       const dirInterval = setInterval(() => {
         const dirs: Array<'front' | 'back' | 'left' | 'right'> = ['front', 'back', 'left', 'right'];
         setDirection(dirs[Math.floor(Math.random() * dirs.length)]);
@@ -89,6 +89,22 @@ export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
     );
   }
 
+  // Sprite de imagen para Vendedor/Fernando (id: 9)
+  function getVendedorSprite() {
+    return (
+      <div className="relative w-11 h-14" style={{ imageRendering: 'pixelated' }}>
+        <Image
+          src={VENDEDOR_SPRITES[direction]}
+          alt="Fernando"
+          fill
+          className="object-contain"
+          style={{ imageRendering: 'pixelated' }}
+          priority
+        />
+      </div>
+    );
+  }
+
   // Select sprite based on task (para otros agentes)
   function getWorkerSprite() {
     // Si es Valentina, usar el sprite de imagen
@@ -99,6 +115,11 @@ export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
     // Si es Camila, usar el sprite de imagen
     if (agent.id === '3') {
       return getCamilaSprite();
+    }
+
+    // Si es Fernando (vendedor), usar el sprite del vendedor
+    if (agent.id === '9') {
+      return getVendedorSprite();
     }
 
     const commonProps = {

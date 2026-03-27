@@ -436,7 +436,7 @@ export function TaskLabel({
   };
   
   const defaultConfig = { icon: GrapeIcon, label: task || 'Tarea', color: '#9e9e9e' };
-  const config = (task && taskConfig[task]) || defaultConfig;
+  const config = (task && taskConfig[task]) ? taskConfig[task] : defaultConfig;
   const Icon = config?.icon || GrapeIcon;
   
   return (
