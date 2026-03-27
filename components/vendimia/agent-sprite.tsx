@@ -132,7 +132,7 @@ export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-
   // Sprite de imagen para Valentina (id: 1)
   function getValentinaSprite() {
     return (
-      <div className="relative w-20 h-28" style={{ imageRendering: 'pixelated' }}>
+      <div className="relative w-20 h-28 inline-block" style={{ imageRendering: 'pixelated' }}>
         <Image
           src={VALENTINA_SPRITES[direction]}
           alt="Valentina"
@@ -148,7 +148,7 @@ export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-
   // Sprite de imagen para Camila (id: 3)
   function getCamilaSprite() {
     return (
-      <div className="relative w-20 h-28" style={{ imageRendering: 'pixelated' }}>
+      <div className="relative w-20 h-28 inline-block" style={{ imageRendering: 'pixelated' }}>
         <Image
           src={CAMILA_SPRITES[direction]}
           alt="Camila"
@@ -164,7 +164,7 @@ export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-
   // Sprite de imagen para Vendedor/Fernando (id: 9)
   function getVendedorSprite() {
     return (
-      <div className="relative w-20 h-28" style={{ imageRendering: 'pixelated' }}>
+      <div className="relative w-20 h-28 inline-block" style={{ imageRendering: 'pixelated' }}>
         <Image
           src={VENDEDOR_SPRITES[direction]}
           alt="Fernando"
@@ -180,7 +180,7 @@ export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-
   // Sprite de imagen para NPC005/Tomas (id: 11)
   function getNPC005Sprite() {
     return (
-      <div className="relative w-20 h-28" style={{ imageRendering: 'pixelated' }}>
+      <div className="relative w-20 h-28 inline-block" style={{ imageRendering: 'pixelated' }}>
         <Image
           src={NPC005_SPRITES[direction]}
           alt="Tomas"
@@ -196,7 +196,7 @@ export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-
   // Sprite de imagen para NPC006/Santiago embotellado (id: 5)
   function getNPC006Sprite() {
     return (
-      <div className="relative w-20 h-28" style={{ imageRendering: 'pixelated' }}>
+      <div className="relative w-20 h-28 inline-block" style={{ imageRendering: 'pixelated' }}>
         <Image
           src={NPC006_SPRITES[direction]}
           alt="Santiago"
@@ -212,7 +212,7 @@ export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-
   // Sprite de imagen para NPC007/Rosita sommelier cata (id: 8)
   function getNPC007Sprite() {
     return (
-      <div className="relative w-20 h-28" style={{ imageRendering: 'pixelated' }}>
+      <div className="relative w-20 h-28 inline-block" style={{ imageRendering: 'pixelated' }}>
         <Image
           src={NPC007_SPRITES[direction]}
           alt="Rosita"
@@ -228,7 +228,7 @@ export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-
   // Sprite de imagen para NPC008/Pancho vendedor ambulante (id: 10)
   function getNPC008Sprite() {
     return (
-      <div className="relative w-20 h-28" style={{ imageRendering: 'pixelated' }}>
+      <div className="relative w-20 h-28 inline-block" style={{ imageRendering: 'pixelated' }}>
         <Image
           src={NPC008_SPRITES[direction]}
           alt="Pancho"
@@ -244,7 +244,7 @@ export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-
   // Sprite de imagen para NPC009/Marta camarera atención (id: 12)
   function getNPC009Sprite() {
     return (
-      <div className="relative w-20 h-28" style={{ imageRendering: 'pixelated' }}>
+      <div className="relative w-20 h-28 inline-block" style={{ imageRendering: 'pixelated' }}>
         <Image
           src={NPC009_SPRITES[direction]}
           alt="Marta"
@@ -260,7 +260,7 @@ export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-
   // Sprite de imagen para NPC010/Elena administrativa oficina (id: 13)
   function getNPC010Sprite() {
     return (
-      <div className="relative w-20 h-28" style={{ imageRendering: 'pixelated' }}>
+      <div className="relative w-20 h-28 inline-block" style={{ imageRendering: 'pixelated' }}>
         <Image
           src={NPC010_SPRITES[direction]}
           alt="Elena"
