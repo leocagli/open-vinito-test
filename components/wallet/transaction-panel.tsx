@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAccount, useChainId, useConnect, usePublicClient, useSendTransaction, useSwitchChain } from 'wagmi';
+import { useAccount, useChainId, useConnect, usePublicClient, useSendTransaction, useSwitchChain, useWriteContract } from 'wagmi';
 import { bscTestnet } from 'wagmi/chains';
-import { connectFreighter, getFreighterNetwork, getFreighterPublicKey, isFreighterInstalled, sendStellarPayment } from '@/lib/stellar-utils';
+import { connectFreighter, getFreighterNetwork, getFreighterPublicKey, isFreighterInstalled, sendStellarPayment, signTransaction } from '@/lib/stellar-utils';
 import { clearWalletConnectSessionStorage, isWalletConnectResetError } from '@/lib/walletconnect-utils';
-import { isAddress, parseEther } from 'viem';
+import { ESCROW_MILESTONE_ABI, X402_SERVICE_PAYWALL_ABI } from '@/lib/bnb-contracts';
+import { isAddress, keccak256, parseEther, stringToHex } from 'viem';
 
 interface TransactionLog {
   id: string;
@@ -23,6 +24,7 @@ export function TransactionPanel() {
   const bnbPublicClient = usePublicClient({ chainId: bscTestnet.id });
   const { sendTransactionAsync, isPending: isSendingBnb } = useSendTransaction();
   const { connectAsync, connectors, isPending: isConnectingBnb } = useConnect();
+  const { writeContractAsync, isPending: isWritingContract } = useWriteContract();
   const { switchChainAsync, isPending: isSwitchingChain } = useSwitchChain();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'bnb' | 'stellar'>('bnb');
@@ -31,10 +33,24 @@ export function TransactionPanel() {
   const [bnbRecipient, setBnbRecipient] = useState('');
   const [stellarAmount, setStellarAmount] = useState('10');
   const [stellarRecipient, setStellarRecipient] = useState('');
+  const [escrowAmount, setEscrowAmount] = useState('0.005');
+  const [escrowDeadlineHours, setEscrowDeadlineHours] = useState('24');
+  const [escrowMetadata, setEscrowMetadata] = useState('vendimia-deal');
+  const [x402Amount, setX402Amount] = useState('0.001');
+  const [x402Ref, setX402Ref] = useState('vendimia-service-demo');
+  const [stellarDealId, setStellarDealId] = useState('1');
+  const [stellarEscrowAmount, setStellarEscrowAmount] = useState('10');
+  const [stellarEscrowMetadata, setStellarEscrowMetadata] = useState('vendimia-soroban');
+  const [stellarReputationDelta, setStellarReputationDelta] = useState('10');
   const [isSendingStellar, setIsSendingStellar] = useState(false);
   const [isConnectingStellar, setIsConnectingStellar] = useState(false);
+  const [isSendingStellarContract, setIsSendingStellarContract] = useState(false);
   const bnbTestnetReady = isConnected && bnbChainId === bscTestnet.id;
   const bnbDefaultRecipient = address || '';
+  const bnbEscrowContract = process.env.NEXT_PUBLIC_BNB_ESCROW_CONTRACT;
+  const bnbX402Contract = process.env.NEXT_PUBLIC_BNB_X402_CONTRACT;
+  const stellarEscrowContract = process.env.NEXT_PUBLIC_STELLAR_ESCROW_CONTRACT_ID;
+  const stellarReputationContract = process.env.NEXT_PUBLIC_STELLAR_REPUTATION_CONTRACT_ID;
 
   const addLog = (log: Omit<TransactionLog, 'id' | 'timestamp'>) => {
     setTxLogs((prev) => [
@@ -249,12 +265,218 @@ export function TransactionPanel() {
     }
   };
 
+  const handleBnbEscrowCreate = async () => {
+    if (!isConnected || !address) {
+      addLog({ type: 'bnb', status: 'error', message: 'Conecta wallet BNB primero' });
+      return;
+    }
+    if (bnbChainId !== bscTestnet.id) {
+      addLog({ type: 'bnb', status: 'error', message: 'Usa BNB Testnet (97)' });
+      return;
+    }
+    if (!bnbEscrowContract || !isAddress(bnbEscrowContract)) {
+      addLog({ type: 'bnb', status: 'error', message: 'Configura NEXT_PUBLIC_BNB_ESCROW_CONTRACT' });
+      return;
+    }
+
+    const payee = (bnbRecipient || bnbDefaultRecipient).trim();
+    if (!isAddress(payee)) {
+      addLog({ type: 'bnb', status: 'error', message: 'Payee EVM invalido' });
+      return;
+    }
+
+    const deadlineHours = Number(escrowDeadlineHours);
+    if (!Number.isFinite(deadlineHours) || deadlineHours <= 0) {
+      addLog({ type: 'bnb', status: 'error', message: 'Deadline invalido' });
+      return;
+    }
+
+    try {
+      addLog({ type: 'bnb', status: 'pending', message: 'Creando escrow EVM...' });
+
+      const deadline = Math.floor(Date.now() / 1000 + deadlineHours * 3600);
+      const txHash = await writeContractAsync({
+        address: bnbEscrowContract as `0x${string}`,
+        abi: ESCROW_MILESTONE_ABI,
+        functionName: 'createDeal',
+        args: [payee as `0x${string}`, BigInt(deadline), escrowMetadata || 'vendimia-deal'],
+        value: parseEther(escrowAmount),
+        chainId: bscTestnet.id,
+      });
+
+      if (bnbPublicClient) {
+        await bnbPublicClient.waitForTransactionReceipt({ hash: txHash });
+      }
+
+      addLog({ type: 'bnb', status: 'success', message: 'Escrow EVM creado', txHash });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Error creando escrow EVM';
+      addLog({ type: 'bnb', status: 'error', message: message.slice(0, 80) });
+    }
+  };
+
+  const handleBnbX402Settle = async () => {
+    if (!isConnected || !address) {
+      addLog({ type: 'bnb', status: 'error', message: 'Conecta wallet BNB primero' });
+      return;
+    }
+    if (bnbChainId !== bscTestnet.id) {
+      addLog({ type: 'bnb', status: 'error', message: 'Usa BNB Testnet (97)' });
+      return;
+    }
+    if (!bnbX402Contract || !isAddress(bnbX402Contract)) {
+      addLog({ type: 'bnb', status: 'error', message: 'Configura NEXT_PUBLIC_BNB_X402_CONTRACT' });
+      return;
+    }
+    if (!x402Ref.trim()) {
+      addLog({ type: 'bnb', status: 'error', message: 'Referencia x402 requerida' });
+      return;
+    }
+
+    try {
+      addLog({ type: 'bnb', status: 'pending', message: 'Ejecutando settle402...' });
+      const refHash = keccak256(stringToHex(x402Ref));
+      const txHash = await writeContractAsync({
+        address: bnbX402Contract as `0x${string}`,
+        abi: X402_SERVICE_PAYWALL_ABI,
+        functionName: 'settle402',
+        args: [refHash],
+        value: parseEther(x402Amount),
+        chainId: bscTestnet.id,
+      });
+
+      if (bnbPublicClient) {
+        await bnbPublicClient.waitForTransactionReceipt({ hash: txHash });
+      }
+
+      addLog({ type: 'bnb', status: 'success', message: 'x402 settle ejecutado', txHash });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Error en settle402';
+      addLog({ type: 'bnb', status: 'error', message: message.slice(0, 80) });
+    }
+  };
+
+  const invokeStellarContract = async (params: {
+    contractId: string;
+    method: string;
+    args: Array<{ type: 'u64' | 'i128' | 'i32' | 'address' | 'string'; value: string | number }>;
+    successMsg: string;
+  }) => {
+    const installed = await isFreighterInstalled();
+    if (!installed) {
+      addLog({ type: 'stellar', status: 'error', message: 'Freighter no instalado' });
+      return;
+    }
+
+    const source = await getFreighterPublicKey();
+    if (!source) {
+      await handleConnectStellar();
+      return;
+    }
+
+    const network = await getFreighterNetwork();
+    if (network !== 'TESTNET') {
+      addLog({ type: 'stellar', status: 'error', message: 'Cambia Freighter a TESTNET' });
+      return;
+    }
+
+    setIsSendingStellarContract(true);
+    try {
+      addLog({ type: 'stellar', status: 'pending', message: `Invocando ${params.method}...` });
+
+      const buildRes = await fetch('/api/stellar/build-contract-tx', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sourcePublic: source,
+          contractId: params.contractId,
+          method: params.method,
+          args: params.args,
+        }),
+      });
+      const buildData = await buildRes.json();
+      if (!buildRes.ok || !buildData?.xdr) {
+        throw new Error(buildData?.error || 'No se pudo construir tx Soroban');
+      }
+
+      const signed = await signTransaction(buildData.xdr, 'TESTNET');
+      if (signed.error || !signed.signedXdr) {
+        throw new Error(signed.error || 'Firma rechazada');
+      }
+
+      const submitRes = await fetch('/api/stellar/submit-tx', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ signedXdr: signed.signedXdr }),
+      });
+      const submitData = await submitRes.json();
+      if (!submitRes.ok || !submitData?.success) {
+        throw new Error(submitData?.error || 'No se pudo enviar tx Soroban');
+      }
+
+      addLog({ type: 'stellar', status: 'success', message: params.successMsg, txHash: submitData.hash });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Error Soroban';
+      addLog({ type: 'stellar', status: 'error', message: message.slice(0, 80) });
+    } finally {
+      setIsSendingStellarContract(false);
+    }
+  };
+
+  const handleStellarEscrowCreate = async () => {
+    if (!stellarEscrowContract) {
+      addLog({ type: 'stellar', status: 'error', message: 'Configura NEXT_PUBLIC_STELLAR_ESCROW_CONTRACT_ID' });
+      return;
+    }
+    const destination = (stellarRecipient || '').trim();
+    if (!destination) {
+      addLog({ type: 'stellar', status: 'error', message: 'Destino Stellar requerido' });
+      return;
+    }
+
+    await invokeStellarContract({
+      contractId: stellarEscrowContract,
+      method: 'create',
+      args: [
+        { type: 'u64', value: Number(stellarDealId) || 1 },
+        { type: 'address', value: 'SOURCE' },
+        { type: 'address', value: destination },
+        { type: 'i128', value: Number(stellarEscrowAmount) || 1 },
+        { type: 'string', value: stellarEscrowMetadata || 'vendimia-soroban' },
+      ],
+      successMsg: 'Escrow Soroban creado',
+    });
+  };
+
+  const handleStellarReputationDelta = async () => {
+    if (!stellarReputationContract) {
+      addLog({ type: 'stellar', status: 'error', message: 'Configura NEXT_PUBLIC_STELLAR_REPUTATION_CONTRACT_ID' });
+      return;
+    }
+
+    const actor = (stellarRecipient || '').trim();
+    if (!actor) {
+      addLog({ type: 'stellar', status: 'error', message: 'Actor Stellar requerido' });
+      return;
+    }
+
+    await invokeStellarContract({
+      contractId: stellarReputationContract,
+      method: 'apply_delta',
+      args: [
+        { type: 'address', value: actor },
+        { type: 'i32', value: Number(stellarReputationDelta) || 0 },
+      ],
+      successMsg: 'Reputacion Soroban actualizada',
+    });
+  };
+
   return (
     <>
       {/* Toggle button - pixel style */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 px-3 py-2 flex items-center gap-2"
+        className="fixed top-28 right-4 md:top-4 md:right-[22rem] z-50 px-3 py-2 flex items-center gap-2"
         style={{
           backgroundColor: '#4a3728',
           border: '3px solid #2d221a',
@@ -275,11 +497,11 @@ export function TransactionPanel() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ y: 300, opacity: 0 }}
+            initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 300, opacity: 0 }}
+            exit={{ y: -20, opacity: 0 }}
             transition={{ type: 'spring', damping: 25 }}
-            className="fixed bottom-20 right-4 md:bottom-24 md:right-6 z-40 w-[calc(100vw-2rem)] max-w-72"
+            className="fixed top-40 right-4 md:top-20 md:right-[22rem] z-40 w-[calc(100vw-2rem)] max-w-72"
             style={{
               backgroundColor: '#f5e6d3',
               border: '4px solid #4a3728',
@@ -415,7 +637,7 @@ export function TransactionPanel() {
                   ) : (
                     <button
                       onClick={handleBNBTransaction}
-                      disabled={isSendingBnb}
+                      disabled={isSendingBnb || isWritingContract}
                       className="w-full py-2 px-3 text-xs font-bold uppercase"
                       style={{ 
                         backgroundColor: !isSendingBnb ? '#f0b90b' : '#ccc',
@@ -429,6 +651,97 @@ export function TransactionPanel() {
                       {bnbChainId !== bscTestnet.id ? 'Red Incorrecta' : isSendingBnb || isConnectingBnb ? 'Confirmando...' : 'Enviar BNB'}
                     </button>
                   )}
+                  <div className="mt-2 space-y-2">
+                    <div
+                      className="text-[10px] uppercase"
+                      style={{ fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
+                    >
+                      Smart Contracts (BNB)
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="number"
+                        value={escrowAmount}
+                        onChange={(e) => setEscrowAmount(e.target.value)}
+                        step="0.001"
+                        min="0"
+                        className="w-full px-2 py-1 text-xs"
+                        style={{ backgroundColor: '#fff', border: '2px solid #4a3728', fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
+                        disabled={isWritingContract}
+                      />
+                      <input
+                        type="number"
+                        value={escrowDeadlineHours}
+                        onChange={(e) => setEscrowDeadlineHours(e.target.value)}
+                        step="1"
+                        min="1"
+                        className="w-full px-2 py-1 text-xs"
+                        style={{ backgroundColor: '#fff', border: '2px solid #4a3728', fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
+                        disabled={isWritingContract}
+                      />
+                    </div>
+                    <input
+                      type="text"
+                      value={escrowMetadata}
+                      onChange={(e) => setEscrowMetadata(e.target.value)}
+                      placeholder="metadata escrow"
+                      className="w-full px-2 py-1 text-xs"
+                      style={{ backgroundColor: '#fff', border: '2px solid #4a3728', fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
+                      disabled={isWritingContract}
+                    />
+                    <button
+                      onClick={handleBnbEscrowCreate}
+                      disabled={isWritingContract || !bnbTestnetReady}
+                      className="w-full py-2 px-3 text-xs font-bold uppercase"
+                      style={{
+                        backgroundColor: !isWritingContract && bnbTestnetReady ? '#2d5a27' : '#ccc',
+                        border: `2px solid ${!isWritingContract && bnbTestnetReady ? '#1a3d16' : '#999'}`,
+                        color: !isWritingContract && bnbTestnetReady ? '#fff' : '#666',
+                        fontFamily: 'var(--font-vt323)',
+                        cursor: !isWritingContract && bnbTestnetReady ? 'pointer' : 'not-allowed',
+                        boxShadow: !isWritingContract && bnbTestnetReady ? '2px 2px 0 rgba(0,0,0,0.2)' : 'none'
+                      }}
+                    >
+                      {isWritingContract ? 'Procesando...' : 'Escrow createDeal'}
+                    </button>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="text"
+                        value={x402Ref}
+                        onChange={(e) => setX402Ref(e.target.value)}
+                        placeholder="x402 ref"
+                        className="w-full px-2 py-1 text-xs"
+                        style={{ backgroundColor: '#fff', border: '2px solid #4a3728', fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
+                        disabled={isWritingContract}
+                      />
+                      <input
+                        type="number"
+                        value={x402Amount}
+                        onChange={(e) => setX402Amount(e.target.value)}
+                        step="0.001"
+                        min="0"
+                        className="w-full px-2 py-1 text-xs"
+                        style={{ backgroundColor: '#fff', border: '2px solid #4a3728', fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
+                        disabled={isWritingContract}
+                      />
+                    </div>
+                    <button
+                      onClick={handleBnbX402Settle}
+                      disabled={isWritingContract || !bnbTestnetReady}
+                      className="w-full py-2 px-3 text-xs font-bold uppercase"
+                      style={{
+                        backgroundColor: !isWritingContract && bnbTestnetReady ? '#4a3728' : '#ccc',
+                        border: `2px solid ${!isWritingContract && bnbTestnetReady ? '#2d221a' : '#999'}`,
+                        color: !isWritingContract && bnbTestnetReady ? '#fff' : '#666',
+                        fontFamily: 'var(--font-vt323)',
+                        cursor: !isWritingContract && bnbTestnetReady ? 'pointer' : 'not-allowed',
+                        boxShadow: !isWritingContract && bnbTestnetReady ? '2px 2px 0 rgba(0,0,0,0.2)' : 'none'
+                      }}
+                    >
+                      {isWritingContract ? 'Procesando...' : 'X402 settle402'}
+                    </button>
+                  </div>
                   {isConnected && bnbChainId !== bscTestnet.id && (
                     <div className="space-y-2">
                       <p 
@@ -524,6 +837,90 @@ export function TransactionPanel() {
                   >
                     {isConnectingStellar ? 'Conectando...' : isSendingStellar ? 'Confirmando...' : 'Enviar XLM'}
                   </button>
+
+                  <div className="mt-2 space-y-2">
+                    <div
+                      className="text-[10px] uppercase"
+                      style={{ fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
+                    >
+                      Smart Contracts (Stellar)
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="number"
+                        value={stellarDealId}
+                        onChange={(e) => setStellarDealId(e.target.value)}
+                        className="w-full px-2 py-1 text-xs"
+                        style={{ backgroundColor: '#fff', border: '2px solid #4a3728', fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
+                        disabled={isSendingStellarContract}
+                      />
+                      <input
+                        type="number"
+                        value={stellarEscrowAmount}
+                        onChange={(e) => setStellarEscrowAmount(e.target.value)}
+                        className="w-full px-2 py-1 text-xs"
+                        style={{ backgroundColor: '#fff', border: '2px solid #4a3728', fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
+                        disabled={isSendingStellarContract}
+                      />
+                    </div>
+                    <input
+                      type="text"
+                      value={stellarEscrowMetadata}
+                      onChange={(e) => setStellarEscrowMetadata(e.target.value)}
+                      placeholder="metadata escrow soroban"
+                      className="w-full px-2 py-1 text-xs"
+                      style={{ backgroundColor: '#fff', border: '2px solid #4a3728', fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
+                      disabled={isSendingStellarContract}
+                    />
+                    <button
+                      onClick={handleStellarEscrowCreate}
+                      disabled={isSendingStellarContract}
+                      className="w-full py-2 px-3 text-xs font-bold uppercase"
+                      style={{
+                        backgroundColor: !isSendingStellarContract ? '#2d5a27' : '#666',
+                        border: `2px solid ${!isSendingStellarContract ? '#1a3d16' : '#555'}`,
+                        color: '#fff',
+                        fontFamily: 'var(--font-vt323)',
+                        boxShadow: !isSendingStellarContract ? '2px 2px 0 rgba(0,0,0,0.2)' : 'none',
+                        cursor: !isSendingStellarContract ? 'pointer' : 'not-allowed'
+                      }}
+                    >
+                      {isSendingStellarContract ? 'Procesando...' : 'Soroban escrow.create'}
+                    </button>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="number"
+                        value={stellarReputationDelta}
+                        onChange={(e) => setStellarReputationDelta(e.target.value)}
+                        className="w-full px-2 py-1 text-xs"
+                        style={{ backgroundColor: '#fff', border: '2px solid #4a3728', fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
+                        disabled={isSendingStellarContract}
+                      />
+                      <div
+                        className="px-2 py-1 text-[10px]"
+                        style={{ backgroundColor: '#e8d5c4', border: '2px solid #4a3728', fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
+                      >
+                        actor = Destino Stellar
+                      </div>
+                    </div>
+                    <button
+                      onClick={handleStellarReputationDelta}
+                      disabled={isSendingStellarContract}
+                      className="w-full py-2 px-3 text-xs font-bold uppercase"
+                      style={{
+                        backgroundColor: !isSendingStellarContract ? '#4a3728' : '#666',
+                        border: `2px solid ${!isSendingStellarContract ? '#2d221a' : '#555'}`,
+                        color: '#fff',
+                        fontFamily: 'var(--font-vt323)',
+                        boxShadow: !isSendingStellarContract ? '2px 2px 0 rgba(0,0,0,0.2)' : 'none',
+                        cursor: !isSendingStellarContract ? 'pointer' : 'not-allowed'
+                      }}
+                    >
+                      {isSendingStellarContract ? 'Procesando...' : 'Soroban reputation.apply_delta'}
+                    </button>
+                  </div>
                 </>
               )}
             </div>

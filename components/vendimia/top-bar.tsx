@@ -136,7 +136,7 @@ export function TopBar({ season, day, totalGrapes, currentScene = 'plaza-central
 
       {/* Right side - Wallet */}
       <motion.div
-        className="absolute top-0 right-0 z-10 pointer-events-none"
+        className="fixed top-16 right-4 md:top-4 md:right-56 z-40 pointer-events-none"
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3 }}
