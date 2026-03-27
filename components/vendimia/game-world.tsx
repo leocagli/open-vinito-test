@@ -30,6 +30,7 @@ const sceneLabels: Record<string, string> = {
 
 export function GameWorld({ agents, selectedAgent, onAgentClick, currentScene = 'plaza-central' }: GameWorldProps) {
   const backgroundImage = sceneBackgrounds[currentScene];
+  const sceneLabel = sceneLabels[currentScene] || 'Vendimia World';
 
   return (
     <div className="relative w-full h-full overflow-hidden">
@@ -81,7 +82,7 @@ export function GameWorld({ agents, selectedAgent, onAgentClick, currentScene = 
               color: '#f5f0e1'
             }}
           >
-            Plaza Central
+            {sceneLabel}
           </span>
         </div>
       </motion.div>

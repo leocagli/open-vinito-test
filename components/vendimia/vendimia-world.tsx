@@ -25,6 +25,7 @@ export function VendimiaWorld() {
   const [day, setDay] = useState(1);
   const [totalGrapes, setTotalGrapes] = useState(12450);
   const [showWelcome, setShowWelcome] = useState(true);
+  const [currentScene, setCurrentScene] = useState('plaza-central');
 
   // Use a stable ref for addMessage to avoid dependency issues
   const addMessageRef = useRef<(msg: Omit<ChatMessage, 'id' | 'timestamp'>) => void>(() => {});
@@ -267,6 +268,7 @@ export function VendimiaWorld() {
             agents={agents}
             selectedAgent={selectedAgent}
             onAgentClick={handleAgentClick}
+            currentScene={currentScene}
           />
 
           <ChatPanel
