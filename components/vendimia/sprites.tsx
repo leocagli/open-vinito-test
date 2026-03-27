@@ -413,19 +413,29 @@ export function TaskLabel({
   task, 
   progress 
 }: { 
-  task: 'cosecha' | 'riego' | 'poda' | 'fermentacion' | 'embotellado' | 'cata';
+  task: string;
   progress: number;
 }) {
-  const taskConfig = {
+  const taskConfig: Record<string, { icon: React.FC<{ size?: number }>; label: string; color: string }> = {
+    // Vinedo
     cosecha: { icon: GrapeIcon, label: 'Cosecha', color: '#4caf50' },
     riego: { icon: WateringCanIcon, label: 'Riego', color: '#4caf50' },
     poda: { icon: PruningIcon, label: 'Poda', color: '#4caf50' },
+    // Fermentacion
     fermentacion: { icon: BarrelIcon, label: 'Fermentacion', color: '#ff9800' },
     embotellado: { icon: BottleIcon, label: 'Embotellado', color: '#ff9800' },
-    cata: { icon: WineGlassIcon, label: 'Cata', color: '#ff9800' },
+    // Oficina
+    cata: { icon: WineGlassIcon, label: 'Cata', color: '#9c27b0' },
+    administracion: { icon: BottleIcon, label: 'Admin', color: '#2196f3' },
+    contabilidad: { icon: BottleIcon, label: 'Contabilidad', color: '#2196f3' },
+    marketing: { icon: BottleIcon, label: 'Marketing', color: '#2196f3' },
+    // Plaza
+    venta: { icon: GrapeIcon, label: 'Venta', color: '#e91e63' },
+    espera: { icon: GrapeIcon, label: 'Espera', color: '#9e9e9e' },
+    descanso: { icon: GrapeIcon, label: 'Descanso', color: '#9e9e9e' },
   };
   
-  const config = taskConfig[task];
+  const config = taskConfig[task] || { icon: GrapeIcon, label: task, color: '#9e9e9e' };
   const Icon = config.icon;
   
   return (

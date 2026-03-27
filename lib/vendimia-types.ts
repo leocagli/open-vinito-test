@@ -5,7 +5,12 @@ export type AgentTask =
   | 'fermentacion' 
   | 'embotellado'
   | 'cata'
-  | 'descanso';
+  | 'descanso'
+  | 'administracion'
+  | 'contabilidad'
+  | 'marketing'
+  | 'venta'
+  | 'espera';
 
 export type AgentLocation = 
   | 'viñedo-norte'
