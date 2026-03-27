@@ -57,9 +57,9 @@ export function GameWorld({ agents, selectedAgent, onAgentClick, currentScene = 
   }, []);
 
   // Parallax offset basado en mouse position (subtle)
-  // Solo calcular si el componente está montado en el cliente
-  const parallaxX = (typeof window !== 'undefined' && windowSize.width > 0) ? (mousePos.x - windowSize.width / 2) * 0.02 : 0;
-  const parallaxY = (typeof window !== 'undefined' && windowSize.height > 0) ? (mousePos.y - windowSize.height / 2) * 0.02 : 0;
+  // Solo calcular si windowSize ha sido inicializado (significa que estamos en cliente)
+  const parallaxX = windowSize.width > 0 ? (mousePos.x - windowSize.width / 2) * 0.02 : 0;
+  const parallaxY = windowSize.height > 0 ? (mousePos.y - windowSize.height / 2) * 0.02 : 0;
 
   return (
     <div className="relative w-full h-full overflow-hidden">
@@ -124,6 +124,7 @@ export function GameWorld({ agents, selectedAgent, onAgentClick, currentScene = 
                 agent={agent}
                 isSelected={selectedAgent?.id === agent.id}
                 onClick={() => onAgentClick(agent)}
+                currentScene={currentScene}
               />
             </div>
           ))}
