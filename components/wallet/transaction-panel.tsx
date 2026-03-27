@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { useAccount, useWriteContract, useReadContract } from 'wagmi';
-import { WalletButtonState } from './wallet-button';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useAccount } from 'wagmi';
 
 interface TransactionLog {
   id: string;
@@ -16,6 +15,7 @@ interface TransactionLog {
 
 export function TransactionPanel() {
   const { address, isConnected } = useAccount();
+  const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'bnb' | 'stellar'>('bnb');
   const [txLogs, setTxLogs] = useState<TransactionLog[]>([]);
   const [bnbAmount, setBnbAmount] = useState('0.01');
@@ -28,7 +28,7 @@ export function TransactionPanel() {
         id: Date.now().toString(),
         timestamp: Date.now(),
       },
-      ...prev,
+      ...prev.slice(0, 4), // Keep only last 5 logs
     ]);
   };
 
@@ -42,52 +42,42 @@ export function TransactionPanel() {
       return;
     }
 
-    try {
+    addLog({
+      type: 'bnb',
+      status: 'pending',
+      message: `Enviando ${bnbAmount} BNB...`,
+    });
+
+    // Simulated transaction
+    setTimeout(() => {
+      const mockTxHash = '0x' + Math.random().toString(16).substring(2, 18);
       addLog({
         type: 'bnb',
-        status: 'pending',
-        message: `Iniciando transacción de ${bnbAmount} BNB...`,
+        status: 'success',
+        message: `${bnbAmount} BNB enviados`,
+        txHash: mockTxHash,
       });
-
-      // Simulación de transacción
-      // En producción, usarías useWriteContract con tu contrato inteligente
-      const mockTxHash = '0x' + Math.random().toString(16).substring(2);
-
-      setTimeout(() => {
-        addLog({
-          type: 'bnb',
-          status: 'success',
-          message: `Transacción exitosa: ${bnbAmount} BNB`,
-          txHash: mockTxHash,
-        });
-      }, 2000);
-    } catch (error) {
-      addLog({
-        type: 'bnb',
-        status: 'error',
-        message: `Error: ${error instanceof Error ? error.message : 'Error desconocido'}`,
-      });
-    }
+    }, 2000);
   };
 
   const handleStellarTransaction = async () => {
-    try {
-      const freighter = (window as any).freighter;
-      if (!freighter) {
-        addLog({
-          type: 'stellar',
-          status: 'error',
-          message: 'Freighter no disponible',
-        });
-        return;
-      }
+    const freighter = (window as any).freighter;
+    if (!freighter) {
+      addLog({
+        type: 'stellar',
+        status: 'error',
+        message: 'Freighter no instalado',
+      });
+      return;
+    }
 
+    try {
       const publicKey = await freighter.getPublicKey();
       if (!publicKey) {
         addLog({
           type: 'stellar',
           status: 'error',
-          message: 'Wallet Freighter no conectado',
+          message: 'Wallet no conectado',
         });
         return;
       }
@@ -95,17 +85,16 @@ export function TransactionPanel() {
       addLog({
         type: 'stellar',
         status: 'pending',
-        message: `Iniciando transacción de ${stellarAmount} XLM...`,
+        message: `Enviando ${stellarAmount} XLM...`,
       });
 
-      // Simulación de transacción Stellar
-      const mockTxHash = 'txbebfae7d11ed9ebfdd00d8caa5c77bdf3cf6fe61a3d5f28ca4ae3c0e969a8c5e';
-
+      // Simulated transaction
       setTimeout(() => {
+        const mockTxHash = 'tx' + Math.random().toString(36).substring(2, 18);
         addLog({
           type: 'stellar',
           status: 'success',
-          message: `Transacción exitosa: ${stellarAmount} XLM`,
+          message: `${stellarAmount} XLM enviados`,
           txHash: mockTxHash,
         });
       }, 2000);
@@ -113,150 +102,250 @@ export function TransactionPanel() {
       addLog({
         type: 'stellar',
         status: 'error',
-        message: `Error: ${error instanceof Error ? error.message : 'Error desconocido'}`,
+        message: 'Error de conexion',
       });
     }
   };
 
   return (
-    <motion.div
-      className="fixed bottom-4 right-4 z-50 max-w-md w-full md:w-96"
-      initial={{ y: 400, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ type: 'spring', damping: 25 }}
-    >
-      <div
-        className="bg-black border-2 border-cyan-400 rounded-lg shadow-lg shadow-cyan-400/50 overflow-hidden"
-        style={{ fontFamily: 'var(--font-vt323)', fontSize: '12px' }}
+    <>
+      {/* Toggle button - pixel style */}
+      <motion.button
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed bottom-4 right-4 z-50 px-3 py-2 flex items-center gap-2"
+        style={{
+          backgroundColor: '#4a3728',
+          border: '3px solid #2d221a',
+          boxShadow: '3px 3px 0 rgba(0,0,0,0.3)',
+          fontFamily: 'var(--font-vt323)',
+          imageRendering: 'pixelated'
+        }}
+        whileHover={{ y: -1 }}
+        whileTap={{ y: 1 }}
       >
-        {/* Header */}
-        <div className="bg-gradient-to-r from-cyan-900 to-purple-900 p-3 border-b border-cyan-400">
-          <h3 className="text-cyan-400 font-bold uppercase tracking-wider">
-            Transacciones
-          </h3>
-        </div>
+        <PixelCoinIcon />
+        <span className="text-xs font-bold text-white uppercase">
+          {isOpen ? 'Cerrar' : 'Transacciones'}
+        </span>
+      </motion.button>
 
-        {/* Tabs */}
-        <div className="flex gap-2 p-3 border-b border-cyan-400 bg-black/50">
-          <button
-            onClick={() => setActiveTab('bnb')}
-            className={`flex-1 py-2 px-3 rounded font-bold uppercase text-xs transition-all ${
-              activeTab === 'bnb'
-                ? 'bg-cyan-500 text-black shadow-lg shadow-cyan-500/50'
-                : 'bg-gray-700 text-cyan-400 hover:bg-gray-600'
-            }`}
+      {/* Panel */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ y: 300, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 300, opacity: 0 }}
+            transition={{ type: 'spring', damping: 25 }}
+            className="fixed bottom-16 right-4 z-40 w-72"
+            style={{
+              backgroundColor: '#f5e6d3',
+              border: '4px solid #4a3728',
+              boxShadow: '4px 4px 0 rgba(0,0,0,0.4)',
+              imageRendering: 'pixelated'
+            }}
           >
-            BNB
-          </button>
-          <button
-            onClick={() => setActiveTab('stellar')}
-            className={`flex-1 py-2 px-3 rounded font-bold uppercase text-xs transition-all ${
-              activeTab === 'stellar'
-                ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/50'
-                : 'bg-gray-700 text-purple-300 hover:bg-gray-600'
-            }`}
-          >
-            Stellar
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="p-4 space-y-4">
-          {activeTab === 'bnb' && (
-            <div className="space-y-3">
-              <div>
-                <label className="block text-cyan-400 text-xs font-bold mb-2">
-                  Cantidad BNB
-                </label>
-                <input
-                  type="number"
-                  value={bnbAmount}
-                  onChange={(e) => setBnbAmount(e.target.value)}
-                  step="0.01"
-                  min="0"
-                  className="w-full bg-black border border-cyan-400 text-cyan-400 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                  disabled={!isConnected}
-                />
-              </div>
-              <button
-                onClick={handleBNBTransaction}
-                disabled={!isConnected}
-                className={`w-full py-2 px-4 rounded font-bold uppercase text-xs transition-all ${
-                  isConnected
-                    ? 'bg-cyan-500 text-black hover:bg-cyan-400 shadow-lg shadow-cyan-500/50 cursor-pointer'
-                    : 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                }`}
+            {/* Header */}
+            <div 
+              className="px-3 py-2"
+              style={{ 
+                backgroundColor: '#4a3728',
+                borderBottom: '2px solid #2d221a'
+              }}
+            >
+              <span 
+                className="text-xs font-bold uppercase tracking-wider"
+                style={{ fontFamily: 'var(--font-vt323)', color: '#ffd700' }}
               >
-                {isConnected ? 'Enviar BNB' : 'Conectar Wallet'}
+                Panel de Transacciones
+              </span>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex" style={{ borderBottom: '2px solid #4a3728' }}>
+              <button
+                onClick={() => setActiveTab('bnb')}
+                className="flex-1 py-2 px-3 text-xs font-bold uppercase"
+                style={{ 
+                  backgroundColor: activeTab === 'bnb' ? '#f0b90b' : '#e8d5c4',
+                  color: activeTab === 'bnb' ? '#1e2026' : '#4a3728',
+                  fontFamily: 'var(--font-vt323)',
+                  borderRight: '2px solid #4a3728'
+                }}
+              >
+                BNB
+              </button>
+              <button
+                onClick={() => setActiveTab('stellar')}
+                className="flex-1 py-2 px-3 text-xs font-bold uppercase"
+                style={{ 
+                  backgroundColor: activeTab === 'stellar' ? '#222' : '#e8d5c4',
+                  color: activeTab === 'stellar' ? '#fff' : '#4a3728',
+                  fontFamily: 'var(--font-vt323)'
+                }}
+              >
+                Stellar
               </button>
             </div>
-          )}
 
-          {activeTab === 'stellar' && (
-            <div className="space-y-3">
-              <div>
-                <label className="block text-purple-400 text-xs font-bold mb-2">
-                  Cantidad XLM
-                </label>
-                <input
-                  type="number"
-                  value={stellarAmount}
-                  onChange={(e) => setStellarAmount(e.target.value)}
-                  step="1"
-                  min="0"
-                  className="w-full bg-black border border-purple-400 text-purple-400 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-              </div>
-              <button
-                onClick={handleStellarTransaction}
-                className="w-full py-2 px-4 rounded font-bold uppercase text-xs transition-all bg-purple-500 text-white hover:bg-purple-400 shadow-lg shadow-purple-500/50"
-              >
-                Enviar XLM
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Logs */}
-        <div className="border-t border-cyan-400 p-3 max-h-48 overflow-y-auto bg-black/30">
-          {txLogs.length === 0 ? (
-            <p className="text-gray-500 text-xs">Sin transacciones aún...</p>
-          ) : (
-            <div className="space-y-2">
-              {txLogs.map((log) => (
-                <motion.div
-                  key={log.id}
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  className={`p-2 rounded border-l-2 text-xs ${
-                    log.type === 'bnb'
-                      ? 'border-cyan-500 bg-cyan-900/20'
-                      : 'border-purple-500 bg-purple-900/20'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`w-2 h-2 rounded-full ${
-                        log.status === 'pending'
-                          ? 'bg-yellow-500 animate-pulse'
-                          : log.status === 'success'
-                          ? 'bg-green-500'
-                          : 'bg-red-500'
-                      }`}
+            {/* Content */}
+            <div className="p-3 space-y-3">
+              {activeTab === 'bnb' && (
+                <>
+                  <div>
+                    <label 
+                      className="block text-xs font-bold mb-1"
+                      style={{ fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
+                    >
+                      Cantidad BNB
+                    </label>
+                    <input
+                      type="number"
+                      value={bnbAmount}
+                      onChange={(e) => setBnbAmount(e.target.value)}
+                      step="0.01"
+                      min="0"
+                      className="w-full px-2 py-1 text-xs"
+                      style={{
+                        backgroundColor: '#fff',
+                        border: '2px solid #4a3728',
+                        fontFamily: 'var(--font-vt323)',
+                        color: '#4a3728'
+                      }}
+                      disabled={!isConnected}
                     />
-                    <span className="text-gray-300">{log.message}</span>
                   </div>
-                  {log.txHash && (
-                    <p className="text-gray-500 mt-1 truncate">
-                      Hash: {log.txHash.substring(0, 16)}...
-                    </p>
-                  )}
-                </motion.div>
-              ))}
+                  <button
+                    onClick={handleBNBTransaction}
+                    disabled={!isConnected}
+                    className="w-full py-2 px-3 text-xs font-bold uppercase"
+                    style={{ 
+                      backgroundColor: isConnected ? '#f0b90b' : '#ccc',
+                      border: `2px solid ${isConnected ? '#c99b09' : '#999'}`,
+                      color: isConnected ? '#1e2026' : '#666',
+                      fontFamily: 'var(--font-vt323)',
+                      cursor: isConnected ? 'pointer' : 'not-allowed',
+                      boxShadow: isConnected ? '2px 2px 0 rgba(0,0,0,0.2)' : 'none'
+                    }}
+                  >
+                    {isConnected ? 'Enviar BNB' : 'Conectar Wallet'}
+                  </button>
+                </>
+              )}
+
+              {activeTab === 'stellar' && (
+                <>
+                  <div>
+                    <label 
+                      className="block text-xs font-bold mb-1"
+                      style={{ fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
+                    >
+                      Cantidad XLM
+                    </label>
+                    <input
+                      type="number"
+                      value={stellarAmount}
+                      onChange={(e) => setStellarAmount(e.target.value)}
+                      step="1"
+                      min="0"
+                      className="w-full px-2 py-1 text-xs"
+                      style={{
+                        backgroundColor: '#fff',
+                        border: '2px solid #4a3728',
+                        fontFamily: 'var(--font-vt323)',
+                        color: '#4a3728'
+                      }}
+                    />
+                  </div>
+                  <button
+                    onClick={handleStellarTransaction}
+                    className="w-full py-2 px-3 text-xs font-bold uppercase"
+                    style={{ 
+                      backgroundColor: '#222',
+                      border: '2px solid #000',
+                      color: '#fff',
+                      fontFamily: 'var(--font-vt323)',
+                      boxShadow: '2px 2px 0 rgba(0,0,0,0.2)'
+                    }}
+                  >
+                    Enviar XLM
+                  </button>
+                </>
+              )}
             </div>
-          )}
-        </div>
-      </div>
-    </motion.div>
+
+            {/* Transaction logs */}
+            <div 
+              className="p-2 max-h-32 overflow-y-auto"
+              style={{ borderTop: '2px solid #4a3728', backgroundColor: '#e8d5c4' }}
+            >
+              {txLogs.length === 0 ? (
+                <p 
+                  className="text-xs text-center py-2"
+                  style={{ fontFamily: 'var(--font-vt323)', color: '#8b8b8b' }}
+                >
+                  Sin transacciones
+                </p>
+              ) : (
+                <div className="space-y-1">
+                  {txLogs.map((log) => (
+                    <motion.div
+                      key={log.id}
+                      initial={{ x: -10, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      className="p-1.5 text-xs"
+                      style={{
+                        backgroundColor: log.type === 'bnb' ? '#fff8e7' : '#f0f0f0',
+                        borderLeft: `3px solid ${
+                          log.status === 'pending' ? '#f0b90b' :
+                          log.status === 'success' ? '#2d5a27' : '#8b2942'
+                        }`,
+                        fontFamily: 'var(--font-vt323)'
+                      }}
+                    >
+                      <div className="flex items-center gap-1">
+                        <span 
+                          className="w-1.5 h-1.5 rounded-full"
+                          style={{
+                            backgroundColor: 
+                              log.status === 'pending' ? '#f0b90b' :
+                              log.status === 'success' ? '#2d5a27' : '#8b2942'
+                          }}
+                        />
+                        <span style={{ color: '#4a3728' }}>{log.message}</span>
+                      </div>
+                      {log.txHash && (
+                        <p style={{ color: '#8b8b8b', fontSize: '10px' }}>
+                          {log.txHash.substring(0, 12)}...
+                        </p>
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
+}
+
+function PixelCoinIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 16 16" style={{ imageRendering: 'pixelated' }}>
+      <rect x="4" y="1" width="8" height="2" fill="#ffd700" />
+      <rect x="2" y="3" width="2" height="2" fill="#ffd700" />
+      <rect x="12" y="3" width="2" height="2" fill="#ffd700" />
+      <rect x="1" y="5" width="2" height="6" fill="#ffd700" />
+      <rect x="13" y="5" width="2" height="6" fill="#ffd700" />
+      <rect x="2" y="11" width="2" height="2" fill="#ffd700" />
+      <rect x="12" y="11" width="2" height="2" fill="#ffd700" />
+      <rect x="4" y="13" width="8" height="2" fill="#ffd700" />
+      <rect x="3" y="3" width="10" height="10" fill="#c9a227" />
+      <rect x="6" y="5" width="4" height="1" fill="#ffd700" />
+      <rect x="7" y="6" width="2" height="4" fill="#ffd700" />
+      <rect x="6" y="10" width="4" height="1" fill="#ffd700" />
+    </svg>
+  )
 }

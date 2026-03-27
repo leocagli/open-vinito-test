@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAppKit, useAppKitAccount, useDisconnect } from '@reown/appkit/react'
+import { useAccount, useDisconnect } from 'wagmi'
+import { useAppKitReady } from './wallet-provider'
 import { 
   connectFreighter, 
   getFreighterPublicKey, 
@@ -35,10 +36,12 @@ export function WalletButton() {
   const [freighterAvailable, setFreighterAvailable] = useState(false)
   const [isConnecting, setIsConnecting] = useState<WalletType>(null)
 
-  // AppKit hooks for BNB
-  const { open: openAppKit } = useAppKit()
-  const { address: bnbAddress, isConnected: isBnbConnected } = useAppKitAccount()
+  // Wagmi hooks (siempre disponibles)
+  const { address: bnbAddress, isConnected: isBnbConnected } = useAccount()
   const { disconnect: disconnectBnb } = useDisconnect()
+  
+  // Check if AppKit is ready
+  const appKitReady = useAppKitReady()
 
   // Check Freighter availability on mount
   useEffect(() => {
@@ -73,16 +76,30 @@ export function WalletButton() {
 
   // Connect to BNB via WalletConnect
   const handleConnectBnb = useCallback(async () => {
+    if (!appKitReady) {
+      console.warn('[v0] AppKit not ready - missing NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID')
+      return
+    }
+    
     setIsConnecting('bnb')
     try {
-      await openAppKit()
+      const { useAppKit } = await import('@reown/appkit/react')
+      // This is a workaround - we need to use the modal directly
+      const appKit = (window as any).appKit
+      if (appKit?.open) {
+        await appKit.open()
+      } else {
+        // Fallback - try to import and use directly
+        const { open } = useAppKit()
+        await open()
+      }
     } catch (err) {
       console.error('[v0] Error connecting BNB wallet:', err)
     } finally {
       setIsConnecting(null)
       setShowDropdown(false)
     }
-  }, [openAppKit])
+  }, [appKitReady])
 
   // Connect to Stellar via Freighter
   const handleConnectStellar = useCallback(async () => {
@@ -129,62 +146,77 @@ export function WalletButton() {
 
   // Format address for display
   const formatAddress = (addr: string) => {
-    return `${addr.slice(0, 6)}...${addr.slice(-4)}`
+    return `${addr.slice(0, 4)}..${addr.slice(-3)}`
   }
 
   const hasAnyConnection = walletState.bnb.connected || walletState.stellar.connected
 
+  // Pixel art styled button colors
+  const buttonBg = hasAnyConnection ? '#2d5a27' : '#4a3728'
+  const buttonBorder = hasAnyConnection ? '#1a3d16' : '#2d221a'
+
   return (
-    <div className="relative">
+    <div className="relative pointer-events-auto">
       <motion.button
         onClick={() => setShowDropdown(!showDropdown)}
-        className="px-3 py-2 pointer-events-auto flex items-center gap-2"
+        className="px-3 py-2 flex items-center gap-2"
         style={{
-          backgroundColor: hasAnyConnection ? '#2d5a27' : '#8b2942',
-          border: '3px solid ' + (hasAnyConnection ? '#1a3d16' : '#5c1a2a'),
+          backgroundColor: buttonBg,
+          border: `3px solid ${buttonBorder}`,
           boxShadow: '3px 3px 0 rgba(0,0,0,0.3)',
-          fontFamily: 'var(--font-vt323)'
+          fontFamily: 'var(--font-vt323)',
+          imageRendering: 'pixelated'
         }}
         whileHover={{ y: -1 }}
         whileTap={{ y: 1 }}
       >
-        <WalletIcon />
-        <span className="text-xs font-bold text-white">
-          {hasAnyConnection ? 'CONNECTED' : 'WALLET'}
+        <PixelWalletIcon connected={hasAnyConnection} />
+        <span className="text-xs font-bold text-white uppercase tracking-wide">
+          {hasAnyConnection 
+            ? (walletState.bnb.address 
+                ? formatAddress(walletState.bnb.address)
+                : walletState.stellar.publicKey 
+                  ? formatAddress(walletState.stellar.publicKey)
+                  : 'WALLET')
+            : 'WALLET'}
         </span>
       </motion.button>
 
       <AnimatePresence>
         {showDropdown && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="absolute top-full right-0 mt-2 w-64 z-50"
+            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            className="absolute top-full right-0 mt-2 w-56 z-50"
             style={{
-              backgroundColor: '#f5f0e1',
-              border: '3px solid #4a3728',
-              boxShadow: '4px 4px 0 rgba(0,0,0,0.3)'
+              backgroundColor: '#f5e6d3',
+              border: '4px solid #4a3728',
+              boxShadow: '4px 4px 0 rgba(0,0,0,0.4)',
+              imageRendering: 'pixelated'
             }}
           >
-            {/* Header */}
+            {/* Header - Pixel style */}
             <div 
-              className="px-3 py-2 border-b-2"
-              style={{ borderColor: '#4a3728', backgroundColor: '#4a3728' }}
+              className="px-3 py-2"
+              style={{ 
+                backgroundColor: '#4a3728',
+                borderBottom: '2px solid #2d221a'
+              }}
             >
               <span 
-                className="text-xs font-bold uppercase"
-                style={{ fontFamily: 'var(--font-vt323)', color: '#f5f0e1' }}
+                className="text-xs font-bold uppercase tracking-wider"
+                style={{ fontFamily: 'var(--font-vt323)', color: '#ffd700' }}
               >
-                Multi-Chain Wallet
+                Conectar Wallet
               </span>
             </div>
 
             {/* BNB Section */}
-            <div className="p-3 border-b-2" style={{ borderColor: '#4a3728' }}>
+            <div className="p-3" style={{ borderBottom: '2px solid #4a3728' }}>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <BnbIcon />
+                  <PixelBnbIcon />
                   <span 
                     className="text-xs font-bold"
                     style={{ fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
@@ -192,54 +224,38 @@ export function WalletButton() {
                     BNB Testnet
                   </span>
                 </div>
-                <span 
-                  className="text-xs px-2 py-0.5"
-                  style={{ 
-                    backgroundColor: walletState.bnb.connected ? '#2d5a27' : '#8b8b8b',
-                    color: '#fff',
-                    fontFamily: 'var(--font-vt323)'
-                  }}
-                >
-                  {walletState.bnb.connected ? 'ON' : 'OFF'}
-                </span>
+                <PixelStatusBadge active={walletState.bnb.connected} />
               </div>
               
               {walletState.bnb.connected && walletState.bnb.address ? (
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2">
                   <span 
-                    className="text-xs"
+                    className="text-xs truncate"
                     style={{ fontFamily: 'var(--font-vt323)', color: '#666' }}
                   >
                     {formatAddress(walletState.bnb.address)}
                   </span>
-                  <button
+                  <PixelButton 
                     onClick={handleDisconnectBnb}
-                    className="text-xs px-2 py-1"
-                    style={{ 
-                      backgroundColor: '#8b2942',
-                      color: '#fff',
-                      border: '2px solid #5c1a2a',
-                      fontFamily: 'var(--font-vt323)'
-                    }}
+                    variant="danger"
+                    small
                   >
-                    Disconnect
-                  </button>
+                    X
+                  </PixelButton>
                 </div>
               ) : (
-                <button
+                <PixelButton
                   onClick={handleConnectBnb}
-                  disabled={isConnecting === 'bnb'}
-                  className="w-full text-xs py-2 px-3"
-                  style={{ 
-                    backgroundColor: '#f0b90b',
-                    color: '#1e2026',
-                    border: '2px solid #c99b09',
-                    fontFamily: 'var(--font-vt323)',
-                    opacity: isConnecting === 'bnb' ? 0.7 : 1
-                  }}
+                  disabled={isConnecting === 'bnb' || !appKitReady}
+                  variant="bnb"
+                  fullWidth
                 >
-                  {isConnecting === 'bnb' ? 'Connecting...' : 'Connect WalletConnect'}
-                </button>
+                  {!appKitReady 
+                    ? 'Config Pendiente' 
+                    : isConnecting === 'bnb' 
+                    ? 'Conectando...' 
+                    : 'WalletConnect'}
+                </PixelButton>
               )}
             </div>
 
@@ -247,7 +263,7 @@ export function WalletButton() {
             <div className="p-3">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <StellarIcon />
+                  <PixelStellarIcon />
                   <span 
                     className="text-xs font-bold"
                     style={{ fontFamily: 'var(--font-vt323)', color: '#4a3728' }}
@@ -255,58 +271,38 @@ export function WalletButton() {
                     Stellar {walletState.stellar.network || 'Testnet'}
                   </span>
                 </div>
-                <span 
-                  className="text-xs px-2 py-0.5"
-                  style={{ 
-                    backgroundColor: walletState.stellar.connected ? '#2d5a27' : '#8b8b8b',
-                    color: '#fff',
-                    fontFamily: 'var(--font-vt323)'
-                  }}
-                >
-                  {walletState.stellar.connected ? 'ON' : 'OFF'}
-                </span>
+                <PixelStatusBadge active={walletState.stellar.connected} />
               </div>
               
               {walletState.stellar.connected && walletState.stellar.publicKey ? (
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2">
                   <span 
-                    className="text-xs"
+                    className="text-xs truncate"
                     style={{ fontFamily: 'var(--font-vt323)', color: '#666' }}
                   >
                     {formatAddress(walletState.stellar.publicKey)}
                   </span>
-                  <button
+                  <PixelButton 
                     onClick={handleDisconnectStellar}
-                    className="text-xs px-2 py-1"
-                    style={{ 
-                      backgroundColor: '#8b2942',
-                      color: '#fff',
-                      border: '2px solid #5c1a2a',
-                      fontFamily: 'var(--font-vt323)'
-                    }}
+                    variant="danger"
+                    small
                   >
-                    Disconnect
-                  </button>
+                    X
+                  </PixelButton>
                 </div>
               ) : (
-                <button
+                <PixelButton
                   onClick={handleConnectStellar}
                   disabled={isConnecting === 'stellar' || !freighterAvailable}
-                  className="w-full text-xs py-2 px-3"
-                  style={{ 
-                    backgroundColor: '#000',
-                    color: '#fff',
-                    border: '2px solid #333',
-                    fontFamily: 'var(--font-vt323)',
-                    opacity: (isConnecting === 'stellar' || !freighterAvailable) ? 0.7 : 1
-                  }}
+                  variant="stellar"
+                  fullWidth
                 >
                   {!freighterAvailable 
-                    ? 'Install Freighter' 
+                    ? 'Instalar Freighter' 
                     : isConnecting === 'stellar' 
-                    ? 'Connecting...' 
-                    : 'Connect Freighter'}
-                </button>
+                    ? 'Conectando...' 
+                    : 'Freighter'}
+                </PixelButton>
               )}
               
               {!freighterAvailable && (
@@ -314,10 +310,14 @@ export function WalletButton() {
                   href="https://www.freighter.app/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-xs mt-2 text-center underline"
-                  style={{ fontFamily: 'var(--font-vt323)', color: '#666' }}
+                  className="block text-xs mt-2 text-center"
+                  style={{ 
+                    fontFamily: 'var(--font-vt323)', 
+                    color: '#8b2942',
+                    textDecoration: 'underline'
+                  }}
                 >
-                  Get Freighter Wallet
+                  Descargar Extension
                 </a>
               )}
             </div>
@@ -328,31 +328,105 @@ export function WalletButton() {
   )
 }
 
-// Icon components
-function WalletIcon() {
+// Pixel art styled components
+
+function PixelWalletIcon({ connected }: { connected: boolean }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4" />
-      <path d="M4 6v12c0 1.1.9 2 2 2h14v-4" />
-      <path d="M18 12a2 2 0 0 0 0 4h4v-4h-4z" />
+    <svg width="14" height="14" viewBox="0 0 16 16" style={{ imageRendering: 'pixelated' }}>
+      <rect x="2" y="4" width="12" height="10" fill={connected ? '#ffd700' : '#d4a574'} />
+      <rect x="1" y="5" width="1" height="8" fill="#4a3728" />
+      <rect x="14" y="5" width="1" height="8" fill="#4a3728" />
+      <rect x="2" y="3" width="12" height="1" fill="#4a3728" />
+      <rect x="2" y="14" width="12" height="1" fill="#4a3728" />
+      <rect x="10" y="8" width="4" height="3" fill="#4a3728" />
+      <rect x="11" y="9" width="2" height="1" fill={connected ? '#2d5a27' : '#8b8b8b'} />
     </svg>
   )
 }
 
-function BnbIcon() {
+function PixelBnbIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 126.61 126.61">
-      <circle cx="63.31" cy="63.31" r="63.31" fill="#f0b90b"/>
-      <path fill="#fff" d="M63.31 23.59l9.54 9.54-23.2 23.2-9.54-9.54zm23.2 0l9.54 9.54-46.4 46.41-9.54-9.54zm-46.4 23.2l9.54 9.54-23.2 23.2-9.54-9.54zm69.6 0l9.54 9.54-46.4 46.41-9.54-9.54zM63.31 69.99l9.54 9.54-9.54 9.54-9.54-9.54z"/>
+    <svg width="14" height="14" viewBox="0 0 16 16" style={{ imageRendering: 'pixelated' }}>
+      <rect x="0" y="0" width="16" height="16" fill="#f0b90b" rx="2" />
+      <rect x="7" y="3" width="2" height="2" fill="#fff" />
+      <rect x="4" y="5" width="2" height="2" fill="#fff" />
+      <rect x="10" y="5" width="2" height="2" fill="#fff" />
+      <rect x="7" y="7" width="2" height="2" fill="#fff" />
+      <rect x="4" y="9" width="2" height="2" fill="#fff" />
+      <rect x="10" y="9" width="2" height="2" fill="#fff" />
+      <rect x="7" y="11" width="2" height="2" fill="#fff" />
     </svg>
   )
 }
 
-function StellarIcon() {
+function PixelStellarIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 227 227">
-      <circle cx="113.5" cy="113.5" r="113.5" fill="#000"/>
-      <path fill="#fff" d="M182.7 82.3L47.2 143.2l-13.5-6.4 135.5-60.9 13.5 6.4zM47.2 83.8l135.5 60.9-13.5 6.4L33.7 90.2l13.5-6.4z"/>
+    <svg width="14" height="14" viewBox="0 0 16 16" style={{ imageRendering: 'pixelated' }}>
+      <rect x="0" y="0" width="16" height="16" fill="#000" rx="2" />
+      <rect x="3" y="5" width="10" height="2" fill="#fff" />
+      <rect x="3" y="9" width="10" height="2" fill="#fff" />
+      <rect x="5" y="7" width="2" height="2" fill="#fff" />
+      <rect x="9" y="7" width="2" height="2" fill="#fff" />
     </svg>
+  )
+}
+
+function PixelStatusBadge({ active }: { active: boolean }) {
+  return (
+    <div 
+      className="px-2 py-0.5"
+      style={{ 
+        backgroundColor: active ? '#2d5a27' : '#8b8b8b',
+        border: `2px solid ${active ? '#1a3d16' : '#666'}`,
+        fontFamily: 'var(--font-vt323)',
+        color: '#fff',
+        fontSize: '10px'
+      }}
+    >
+      {active ? 'ON' : 'OFF'}
+    </div>
+  )
+}
+
+interface PixelButtonProps {
+  children: React.ReactNode
+  onClick: () => void
+  disabled?: boolean
+  variant?: 'bnb' | 'stellar' | 'danger' | 'default'
+  fullWidth?: boolean
+  small?: boolean
+}
+
+function PixelButton({ 
+  children, 
+  onClick, 
+  disabled, 
+  variant = 'default',
+  fullWidth,
+  small
+}: PixelButtonProps) {
+  const colors = {
+    bnb: { bg: '#f0b90b', border: '#c99b09', text: '#1e2026' },
+    stellar: { bg: '#222', border: '#000', text: '#fff' },
+    danger: { bg: '#8b2942', border: '#5c1a2a', text: '#fff' },
+    default: { bg: '#4a3728', border: '#2d221a', text: '#fff' }
+  }[variant]
+
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`${fullWidth ? 'w-full' : ''} ${small ? 'px-2 py-1' : 'py-2 px-3'} text-xs font-bold uppercase`}
+      style={{ 
+        backgroundColor: disabled ? '#ccc' : colors.bg,
+        border: `2px solid ${disabled ? '#999' : colors.border}`,
+        color: disabled ? '#666' : colors.text,
+        fontFamily: 'var(--font-vt323)',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        boxShadow: disabled ? 'none' : '2px 2px 0 rgba(0,0,0,0.2)'
+      }}
+    >
+      {children}
+    </button>
   )
 }

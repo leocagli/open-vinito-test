@@ -87,7 +87,7 @@ export function TopBar({ season, day, totalGrapes, currentScene = 'plaza-central
               className="text-xs font-bold"
               style={{ fontFamily: 'var(--font-vt323)', color: '#7c3aed' }}
             >
-              {new Intl.NumberFormat('en-US').format(totalGrapes)}
+              {totalGrapes.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             </span>
           </div>
         </div>
