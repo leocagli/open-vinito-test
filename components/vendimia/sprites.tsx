@@ -435,11 +435,10 @@ export function TaskLabel({
     descanso: { icon: GrapeIcon, label: 'Descanso', color: '#9e9e9e' },
   };
   
-  // Fallback robusto para evitar undefined
-  const defaultConfig = { icon: GrapeIcon, label: task || 'Tarea', color: '#9e9e9e' };
-  const foundConfig = task ? taskConfig[task] : null;
-  const config = foundConfig || defaultConfig;
-  const Icon = config.icon || GrapeIcon;
+  // Configuración segura con fallback
+  const defaultConfig = { icon: GrapeIcon, label: 'Tarea', color: '#9e9e9e' };
+  const config = (taskConfig as any)[task] || defaultConfig;
+  const Icon = (config?.icon) || GrapeIcon;
   
   return (
     <div 

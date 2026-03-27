@@ -5,6 +5,7 @@ export const initialAgents: Agent[] = [
   { id: '1', name: 'Valentina', avatar: '👩‍🌾', task: 'cosecha', location: 'vinedo', progress: 75, x: 25, y: 45, color: '#8B5CF6', skinColor: '#e8c39e', hairColor: '#5c3d2e', shirtColor: '#4a6fa5' },
   { id: '2', name: 'Martin', avatar: '👨‍🌾', task: 'riego', location: 'vinedo', progress: 45, x: 65, y: 55, color: '#3B82F6', skinColor: '#d4a574', hairColor: '#2c1810', shirtColor: '#4a6fa5' },
   { id: '3', name: 'Camila', avatar: '👩‍🌾', task: 'poda', location: 'vinedo', progress: 30, x: 45, y: 65, color: '#10B981', skinColor: '#c9a86c', hairColor: '#1a1a1a', shirtColor: '#2d5a27' },
+  { id: '11', name: 'Tomas', avatar: '👨‍🌾', task: 'cosecha', location: 'vinedo', progress: 55, x: 75, y: 45, color: '#F59E0B', skinColor: '#d4a574', hairColor: '#8b4513', shirtColor: '#8b3a62' },
   
   // Fermentacion - fermentacion, embotellado
   { id: '4', name: 'Lucia', avatar: '👩‍🔬', task: 'fermentacion', location: 'bodega', progress: 90, x: 30, y: 50, color: '#EC4899', skinColor: '#f5d6c6', hairColor: '#8b4513', shirtColor: '#f5f5dc' },

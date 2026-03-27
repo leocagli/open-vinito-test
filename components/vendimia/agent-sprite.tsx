@@ -34,6 +34,13 @@ const VENDEDOR_SPRITES = {
   right: '/sprites/vendedor-right.png',
 };
 
+const NPC005_SPRITES = {
+  front: '/sprites/npc005-front.png',
+  back: '/sprites/npc005-back.png',
+  left: '/sprites/npc005-left.png',
+  right: '/sprites/npc005-right.png',
+};
+
 export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
   const [walkFrame, setWalkFrame] = useState(0);
   const [direction, setDirection] = useState<'front' | 'back' | 'left' | 'right'>('front');
@@ -60,7 +67,7 @@ export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
 
   // Cambiar direccion aleatoriamente para agentes con sprites de imagen
   useEffect(() => {
-    if (agent.id === '1' || agent.id === '3' || agent.id === '9') {
+    if (agent.id === '1' || agent.id === '3' || agent.id === '9' || agent.id === '11') {
       const dirInterval = setInterval(() => {
         const dirs: Array<'front' | 'back' | 'left' | 'right'> = ['front', 'back', 'left', 'right'];
         setDirection(dirs[Math.floor(Math.random() * dirs.length)]);
@@ -117,6 +124,22 @@ export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
     );
   }
 
+  // Sprite de imagen para NPC005/Tomas (id: 11)
+  function getNPC005Sprite() {
+    return (
+      <div className="relative w-11 h-14" style={{ imageRendering: 'pixelated' }}>
+        <Image
+          src={NPC005_SPRITES[direction]}
+          alt="Tomas"
+          fill
+          className="object-contain"
+          style={{ imageRendering: 'pixelated' }}
+          priority
+        />
+      </div>
+    );
+  }
+
   // Select sprite based on task (para otros agentes)
   function getWorkerSprite() {
     // Si es Valentina, usar el sprite de imagen
@@ -132,6 +155,11 @@ export function AgentSprite({ agent, onClick, isSelected }: AgentSpriteProps) {
     // Si es Fernando (vendedor), usar el sprite del vendedor
     if (agent.id === '9') {
       return getVendedorSprite();
+    }
+
+    // Si es Tomas (NPC005), usar el sprite del trabajador de viñedo
+    if (agent.id === '11') {
+      return getNPC005Sprite();
     }
 
     const commonProps = {
