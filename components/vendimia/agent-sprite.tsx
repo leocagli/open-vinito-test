@@ -84,6 +84,13 @@ const NPC011_SPRITES = {
   right: '/sprites/npc011-right.png',
 };
 
+const NPC012_SPRITES = {
+  front: '/sprites/npc012-front.png',
+  back: '/sprites/npc012-back.png',
+  left: '/sprites/npc012-left.png',
+  right: '/sprites/npc012-right.png',
+};
+
 export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-central' }: AgentSpriteProps) {
   const [walkFrame, setWalkFrame] = useState(0);
   const [direction, setDirection] = useState<'front' | 'back' | 'left' | 'right'>('front');
@@ -271,9 +278,19 @@ export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-
     );
   }
 
-  // Sprite de trader Binance para Bruno (id: 15)
+  // Sprite de trader Binance para Bruno (id: 15) - PNG direccional
   function getBrunoSprite() {
-    return <BinanceTraderSprite size={80} />;
+    return (
+      <Image
+        src={NPC012_SPRITES[direction]}
+        alt="Bruno"
+        width={80}
+        height={112}
+        className="object-contain"
+        style={{ imageRendering: 'pixelated' }}
+        priority
+      />
+    );
   }
 
   // Sprite de traje de cerdo para Chanchita (id: 14) - PNG direccional
