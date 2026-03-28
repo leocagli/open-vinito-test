@@ -1116,6 +1116,106 @@ export function SunSprite({ size = 32 }: { size?: number }) {
   );
 }
 
+// Binance trader sprite - character with black cap, black Binance t-shirt, gray pants
+export function BinanceTraderSprite({
+  size = 48,
+}: {
+  size?: number;
+}) {
+  const capBlack = '#1a1a1a';
+  const shirtBlack = '#222222';
+  const goldLogo = '#F0B90B';
+  const goldDark = '#c99a08';
+  const hairColor = '#5c3d2e';
+  const skinColor = '#d4956a';
+  const skinDark = '#b87a4e';
+  const pantsGray = '#5a5e6a';
+  const pantsDark = '#3e424d';
+  const shoesDark = '#1c1c1c';
+
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 32 32"
+      style={{ imageRendering: 'pixelated' }}
+    >
+      {/* Cap brim (front) */}
+      <rect x="8" y="6" width="16" height="2" fill={capBlack} />
+      <rect x="7" y="7" width="18" height="1" fill={capBlack} />
+
+      {/* Cap body */}
+      <rect x="9" y="2" width="14" height="6" fill={capBlack} />
+      <rect x="8" y="3" width="1" height="4" fill={capBlack} />
+      <rect x="23" y="3" width="1" height="4" fill={capBlack} />
+      <rect x="11" y="1" width="10" height="2" fill={capBlack} />
+
+      {/* Binance logo on cap (gold diamond shape) */}
+      <rect x="15" y="3" width="2" height="2" fill={goldLogo} />
+      <rect x="14" y="4" width="1" height="1" fill={goldLogo} />
+      <rect x="17" y="4" width="1" height="1" fill={goldLogo} />
+      <rect x="13" y="4" width="1" height="1" fill={goldDark} />
+      <rect x="18" y="4" width="1" height="1" fill={goldDark} />
+
+      {/* Hair under cap sides */}
+      <rect x="9" y="7" width="2" height="3" fill={hairColor} />
+      <rect x="21" y="7" width="2" height="3" fill={hairColor} />
+      <rect x="10" y="9" width="2" height="2" fill={hairColor} />
+      <rect x="20" y="9" width="2" height="2" fill={hairColor} />
+
+      {/* Face */}
+      <rect x="11" y="7" width="10" height="8" fill={skinColor} />
+      <rect x="10" y="8" width="1" height="6" fill={skinColor} />
+      <rect x="21" y="8" width="1" height="6" fill={skinColor} />
+
+      {/* Eyes */}
+      <rect x="12" y="10" width="3" height="2" fill="#2a1a0e" />
+      <rect x="17" y="10" width="3" height="2" fill="#2a1a0e" />
+      {/* Eye shine */}
+      <rect x="14" y="10" width="1" height="1" fill="#6b4226" />
+      <rect x="19" y="10" width="1" height="1" fill="#6b4226" />
+
+      {/* Nose */}
+      <rect x="15" y="12" width="2" height="1" fill={skinDark} />
+
+      {/* Mouth (slight smirk) */}
+      <rect x="14" y="14" width="4" height="1" fill={skinDark} />
+      <rect x="17" y="13" width="1" height="1" fill={skinDark} />
+
+      {/* Neck */}
+      <rect x="14" y="15" width="4" height="2" fill={skinColor} />
+
+      {/* Black t-shirt body */}
+      <rect x="10" y="17" width="12" height="9" fill={shirtBlack} />
+      <rect x="9" y="18" width="1" height="7" fill={shirtBlack} />
+      <rect x="22" y="18" width="1" height="7" fill={shirtBlack} />
+
+      {/* Binance logo on shirt chest (gold diamond) */}
+      <rect x="15" y="19" width="2" height="2" fill={goldLogo} />
+      <rect x="14" y="20" width="1" height="1" fill={goldLogo} />
+      <rect x="17" y="20" width="1" height="1" fill={goldLogo} />
+      <rect x="13" y="20" width="1" height="1" fill={goldDark} />
+      <rect x="18" y="20" width="1" height="1" fill={goldDark} />
+
+      {/* Arms */}
+      <rect x="7" y="17" width="3" height="7" fill={shirtBlack} />
+      <rect x="22" y="17" width="3" height="7" fill={shirtBlack} />
+      {/* Hands */}
+      <rect x="7" y="23" width="3" height="2" fill={skinColor} />
+      <rect x="22" y="23" width="3" height="2" fill={skinColor} />
+
+      {/* Gray pants */}
+      <rect x="10" y="26" width="5" height="4" fill={pantsGray} />
+      <rect x="17" y="26" width="5" height="4" fill={pantsGray} />
+      <rect x="11" y="25" width="10" height="2" fill={pantsDark} />
+
+      {/* Shoes */}
+      <rect x="9" y="29" width="6" height="2" fill={shoesDark} />
+      <rect x="17" y="29" width="6" height="2" fill={shoesDark} />
+    </svg>
+  );
+}
+
 // Pig costume sprite - character wearing a pink pig onesie
 export function PigCostumeSprite({
   size = 48,

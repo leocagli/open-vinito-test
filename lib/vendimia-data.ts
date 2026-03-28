@@ -17,6 +17,7 @@ export const initialAgents: Agent[] = [
   { id: '10', name: 'Pancho', avatar: '👨‍🌾', task: 'venta', location: 'plaza', progress: 35, x: 70, y: 50, color: '#10B981', model: 'claude-3.5-haiku', skills: ['Sales Script', 'Customer Support'], reputationScore: 545, skinColor: '#c9a86c', hairColor: '#3d2914', shirtColor: '#f5f5dc' },
   { id: '12', name: 'Marta', avatar: '👩‍🍳', task: 'venta', location: 'plaza', progress: 50, x: 40, y: 35, color: '#DC2626', model: 'gpt-5-mini', skills: ['Upsell', 'Escrow Followup', 'x402 Tickets'], reputationScore: 605, skinColor: '#e8c39e', hairColor: '#8b4513', shirtColor: '#8b3a40' },
   { id: '14', name: 'Chanchita', avatar: '🐷', task: 'descanso', location: 'plaza', progress: 20, x: 55, y: 60, color: '#F472B6', model: 'claude-3.5-haiku', skills: ['Entretenimiento', 'Animación', 'Turismo'], reputationScore: 510, skinColor: '#e8c39e', hairColor: '#5c3d2e', shirtColor: '#f4a7b9' },
+  { id: '15', name: 'Bruno', avatar: '🪙', task: 'contabilidad', location: 'oficina', progress: 60, x: 60, y: 45, color: '#F0B90B', model: 'claude-4-opus', skills: ['DeFi', 'Trading', 'Tokenomics'], reputationScore: 730, skinColor: '#d4956a', hairColor: '#5c3d2e', shirtColor: '#222222' },
 ];
 
 export const buildings: Building[] = [
