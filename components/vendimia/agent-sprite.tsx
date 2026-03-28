@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import type { Agent } from '@/lib/vendimia-types';
-import { WorkerSprite, TaskLabel, WorkerHarvesting, WorkerWatering, WorkerWalking, OfficeWorker } from './sprites';
+import { WorkerSprite, TaskLabel, WorkerHarvesting, WorkerWatering, WorkerWalking, OfficeWorker, PigCostumeSprite } from './sprites';
 
 interface AgentSpriteProps {
   agent: Agent;
@@ -120,7 +120,7 @@ export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-
 
   // Cambiar direccion aleatoriamente para agentes con sprites de imagen
   useEffect(() => {
-    if (agent.id === '1' || agent.id === '3' || agent.id === '5' || agent.id === '8' || agent.id === '10' || agent.id === '11' || agent.id === '12' || agent.id === '13') {
+    if (agent.id === '1' || agent.id === '3' || agent.id === '5' || agent.id === '8' || agent.id === '10' || agent.id === '11' || agent.id === '12' || agent.id === '13' || agent.id === '14') {
       const dirInterval = setInterval(() => {
         const dirs: Array<'front' | 'back' | 'left' | 'right'> = ['front', 'back', 'left', 'right'];
         setDirection(dirs[Math.floor(Math.random() * dirs.length)]);
@@ -264,6 +264,11 @@ export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-
     );
   }
 
+  // Sprite de traje de cerdo para Chanchita (id: 14)
+  function getChanchitaSprite() {
+    return <PigCostumeSprite size={80} />;
+  }
+
   // Select sprite based on task (para otros agentes)
   function getWorkerSprite() {
     // Si es Valentina, usar el sprite de imagen
@@ -309,6 +314,11 @@ export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-
     // Si es Elena (NPC010 administrativa oficina), usar el sprite de oficina
     if (agent.id === '13') {
       return getNPC010Sprite();
+    }
+
+    // Si es Chanchita (traje de cerdo), usar el sprite de cerdita
+    if (agent.id === '14') {
+      return getChanchitaSprite();
     }
 
     const commonProps = {

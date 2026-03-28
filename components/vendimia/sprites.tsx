@@ -1115,3 +1115,90 @@ export function SunSprite({ size = 32 }: { size?: number }) {
     </svg>
   );
 }
+
+// Pig costume sprite - character wearing a pink pig onesie
+export function PigCostumeSprite({
+  size = 48,
+}: {
+  size?: number;
+}) {
+  const pigPink = '#f4a7b9';
+  const pigDark = '#e07090';
+  const pigLight = '#fce4ec';
+  const hairColor = '#5c3d2e';
+  const skinColor = '#e8c39e';
+  const eyeColor = '#3e2723';
+
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 32 32"
+      style={{ imageRendering: 'pixelated' }}
+    >
+      {/* Pig ears on hood (left) */}
+      <rect x="8" y="1" width="4" height="4" fill={pigPink} />
+      <rect x="9" y="2" width="2" height="2" fill={pigDark} />
+      {/* Pig ears on hood (right) */}
+      <rect x="20" y="1" width="4" height="4" fill={pigPink} />
+      <rect x="21" y="2" width="2" height="2" fill={pigDark} />
+
+      {/* Hood (pig head) */}
+      <rect x="9" y="3" width="14" height="10" fill={pigPink} />
+      <rect x="8" y="4" width="1" height="8" fill={pigPink} />
+      <rect x="23" y="4" width="1" height="8" fill={pigPink} />
+
+      {/* Brown hair peeking under hood */}
+      <rect x="10" y="10" width="3" height="2" fill={hairColor} />
+      <rect x="19" y="10" width="3" height="2" fill={hairColor} />
+
+      {/* Face / skin area inside hood */}
+      <rect x="11" y="5" width="10" height="7" fill={skinColor} />
+
+      {/* Eyes */}
+      <rect x="12" y="7" width="2" height="2" fill={eyeColor} />
+      <rect x="18" y="7" width="2" height="2" fill={eyeColor} />
+      {/* Eye shine */}
+      <rect x="12" y="7" width="1" height="1" fill="#ffffff" />
+      <rect x="18" y="7" width="1" height="1" fill="#ffffff" />
+
+      {/* Pig snout */}
+      <rect x="13" y="10" width="6" height="4" fill={pigDark} />
+      <rect x="14" y="11" width="2" height="2" fill="#c05070" />
+      <rect x="17" y="11" width="2" height="2" fill="#c05070" />
+      {/* Rosy cheeks */}
+      <rect x="11" y="9" width="2" height="1" fill="#f48fb1" />
+      <rect x="19" y="9" width="2" height="1" fill="#f48fb1" />
+
+      {/* Neck area */}
+      <rect x="14" y="12" width="4" height="2" fill={skinColor} />
+
+      {/* Body - pig onesie */}
+      <rect x="9" y="14" width="14" height="10" fill={pigPink} />
+      <rect x="8" y="15" width="1" height="8" fill={pigPink} />
+      <rect x="23" y="15" width="1" height="8" fill={pigPink} />
+      {/* Belly lighter area */}
+      <rect x="12" y="15" width="8" height="7" fill={pigLight} />
+      {/* Belly button / onesie detail */}
+      <rect x="15" y="20" width="2" height="1" fill={pigDark} />
+
+      {/* Arms */}
+      <rect x="6" y="15" width="3" height="6" fill={pigPink} />
+      <rect x="23" y="15" width="3" height="6" fill={pigPink} />
+      {/* Hands (little pig hooves) */}
+      <rect x="5" y="20" width="4" height="3" fill={pigDark} />
+      <rect x="23" y="20" width="4" height="3" fill={pigDark} />
+
+      {/* Legs */}
+      <rect x="10" y="24" width="5" height="5" fill={pigPink} />
+      <rect x="17" y="24" width="5" height="5" fill={pigPink} />
+      {/* Feet (pig hooves) */}
+      <rect x="9" y="28" width="6" height="3" fill={pigDark} />
+      <rect x="17" y="28" width="6" height="3" fill={pigDark} />
+
+      {/* Curly tail (back side hint) */}
+      <rect x="22" y="22" width="2" height="2" fill={pigDark} />
+      <rect x="24" y="21" width="1" height="2" fill={pigDark} />
+    </svg>
+  );
+}
