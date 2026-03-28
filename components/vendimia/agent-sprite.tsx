@@ -77,6 +77,13 @@ const NPC010_SPRITES = {
   right: '/sprites/npc010-right.png',
 };
 
+const NPC011_SPRITES = {
+  front: '/sprites/npc011-front.png',
+  back: '/sprites/npc011-back.png',
+  left: '/sprites/npc011-left.png',
+  right: '/sprites/npc011-right.png',
+};
+
 export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-central' }: AgentSpriteProps) {
   const [walkFrame, setWalkFrame] = useState(0);
   const [direction, setDirection] = useState<'front' | 'back' | 'left' | 'right'>('front');
@@ -269,9 +276,19 @@ export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-
     return <BinanceTraderSprite size={80} />;
   }
 
-  // Sprite de traje de cerdo para Chanchita (id: 14)
+  // Sprite de traje de cerdo para Chanchita (id: 14) - PNG direccional
   function getChanchitaSprite() {
-    return <PigCostumeSprite size={80} />;
+    return (
+      <Image
+        src={NPC011_SPRITES[direction]}
+        alt="Chanchita"
+        width={80}
+        height={112}
+        className="object-contain"
+        style={{ imageRendering: 'pixelated' }}
+        priority
+      />
+    );
   }
 
   // Select sprite based on task (para otros agentes)
