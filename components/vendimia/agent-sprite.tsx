@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import type { Agent } from '@/lib/vendimia-types';
-import { WorkerSprite, TaskLabel, WorkerHarvesting, WorkerWatering, WorkerWalking, OfficeWorker, PigCostumeSprite } from './sprites';
+import { WorkerSprite, TaskLabel, WorkerHarvesting, WorkerWatering, WorkerWalking, OfficeWorker, PigCostumeSprite, BinanceTraderSprite } from './sprites';
 
 interface AgentSpriteProps {
   agent: Agent;
@@ -120,7 +120,7 @@ export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-
 
   // Cambiar direccion aleatoriamente para agentes con sprites de imagen
   useEffect(() => {
-    if (agent.id === '1' || agent.id === '3' || agent.id === '5' || agent.id === '8' || agent.id === '10' || agent.id === '11' || agent.id === '12' || agent.id === '13' || agent.id === '14') {
+    if (agent.id === '1' || agent.id === '3' || agent.id === '5' || agent.id === '8' || agent.id === '10' || agent.id === '11' || agent.id === '12' || agent.id === '13' || agent.id === '14' || agent.id === '15') {
       const dirInterval = setInterval(() => {
         const dirs: Array<'front' | 'back' | 'left' | 'right'> = ['front', 'back', 'left', 'right'];
         setDirection(dirs[Math.floor(Math.random() * dirs.length)]);
@@ -264,6 +264,11 @@ export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-
     );
   }
 
+  // Sprite de trader Binance para Bruno (id: 15)
+  function getBrunoSprite() {
+    return <BinanceTraderSprite size={80} />;
+  }
+
   // Sprite de traje de cerdo para Chanchita (id: 14)
   function getChanchitaSprite() {
     return <PigCostumeSprite size={80} />;
@@ -319,6 +324,11 @@ export function AgentSprite({ agent, onClick, isSelected, currentScene = 'plaza-
     // Si es Chanchita (traje de cerdo), usar el sprite de cerdita
     if (agent.id === '14') {
       return getChanchitaSprite();
+    }
+
+    // Si es Bruno (trader Binance), usar el sprite del trader
+    if (agent.id === '15') {
+      return getBrunoSprite();
     }
 
     const commonProps = {
